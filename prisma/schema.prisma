@@ -1,0 +1,44 @@
+// prisma/schema.prisma
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Course {
+  id        String   @id @default(cuid())
+  title     String
+  content   String   @db.Text
+  summary   String?  @db.Text
+  createdAt DateTime @default(now())
+  
+  questions   Question[] 
+  quizResults QuizResult[] // <--- NEW RELATION
+}
+
+model Question {
+  id        String   @id @default(cuid())
+  courseId  String
+  course    Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  
+  question  String   @db.Text
+  options   String[] 
+  answer    String   
+  
+  createdAt DateTime @default(now())
+}
+
+// --- NEW MODEL ---
+model QuizResult {
+  id        String   @id @default(cuid())
+  courseId  String
+  course    Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  
+  score     Int      // How many they got right (e.g., 4)
+  total     Int      // Total questions (e.g., 5)
+  createdAt DateTime @default(now())
+}
