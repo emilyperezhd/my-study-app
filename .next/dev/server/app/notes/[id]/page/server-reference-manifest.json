@@ -1,0 +1,95 @@
+{
+  "node": {
+    "402a91be692d9b09d68995a31edf77d245db9db81c": {
+      "workers": {
+        "app/notes/[id]/page": {
+          "moduleId": "[project]/.next-internal/server/app/notes/[id]/page/actions.js { ACTIONS_MODULE0 => \"[project]/src/app/notes/[id]/page.tsx [app-rsc] (ecmascript)\", ACTIONS_MODULE1 => \"[project]/src/app/actions.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+          "async": false,
+          "exportedName": "$$RSC_SERVER_ACTION_0",
+          "filename": "src/app/notes/[id]/page.tsx"
+        }
+      },
+      "layer": {
+        "app/notes/[id]/page": "rsc"
+      },
+      "exportedName": "$$RSC_SERVER_ACTION_0",
+      "filename": "src/app/notes/[id]/page.tsx"
+    },
+    "4060d7de527aaa22ee3567c7a37b6942aadf151553": {
+      "workers": {
+        "app/notes/[id]/page": {
+          "moduleId": "[project]/.next-internal/server/app/notes/[id]/page/actions.js { ACTIONS_MODULE0 => \"[project]/src/app/notes/[id]/page.tsx [app-rsc] (ecmascript)\", ACTIONS_MODULE1 => \"[project]/src/app/actions.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+          "async": false,
+          "exportedName": "$$RSC_SERVER_ACTION_1",
+          "filename": "src/app/notes/[id]/page.tsx"
+        }
+      },
+      "layer": {
+        "app/notes/[id]/page": "rsc"
+      },
+      "exportedName": "$$RSC_SERVER_ACTION_1",
+      "filename": "src/app/notes/[id]/page.tsx"
+    },
+    "4029b1f2a07c9a7d620d4b958168233797a4861b20": {
+      "workers": {
+        "app/notes/[id]/page": {
+          "moduleId": "[project]/.next-internal/server/app/notes/[id]/page/actions.js { ACTIONS_MODULE0 => \"[project]/src/app/notes/[id]/page.tsx [app-rsc] (ecmascript)\", ACTIONS_MODULE1 => \"[project]/src/app/actions.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+          "async": false,
+          "exportedName": "uploadPdf",
+          "filename": "src/app/actions.ts"
+        }
+      },
+      "layer": {
+        "app/notes/[id]/page": "rsc"
+      },
+      "exportedName": "uploadPdf",
+      "filename": "src/app/actions.ts"
+    },
+    "409078de68a41a43e66f0601878397a73538990768": {
+      "workers": {
+        "app/notes/[id]/page": {
+          "moduleId": "[project]/.next-internal/server/app/notes/[id]/page/actions.js { ACTIONS_MODULE0 => \"[project]/src/app/notes/[id]/page.tsx [app-rsc] (ecmascript)\", ACTIONS_MODULE1 => \"[project]/src/app/actions.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+          "async": false,
+          "exportedName": "generateStudyGuide",
+          "filename": "src/app/actions.ts"
+        }
+      },
+      "layer": {
+        "app/notes/[id]/page": "rsc"
+      },
+      "exportedName": "generateStudyGuide",
+      "filename": "src/app/actions.ts"
+    },
+    "40f43fc974ff6928b7b3a2e6912cea9dbb69f4517b": {
+      "workers": {
+        "app/notes/[id]/page": {
+          "moduleId": "[project]/.next-internal/server/app/notes/[id]/page/actions.js { ACTIONS_MODULE0 => \"[project]/src/app/notes/[id]/page.tsx [app-rsc] (ecmascript)\", ACTIONS_MODULE1 => \"[project]/src/app/actions.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+          "async": false,
+          "exportedName": "generateQuiz",
+          "filename": "src/app/actions.ts"
+        }
+      },
+      "layer": {
+        "app/notes/[id]/page": "rsc"
+      },
+      "exportedName": "generateQuiz",
+      "filename": "src/app/actions.ts"
+    },
+    "707237374e2ca69a57c875b3ea679e9f2e612c7182": {
+      "workers": {
+        "app/notes/[id]/page": {
+          "moduleId": "[project]/.next-internal/server/app/notes/[id]/page/actions.js { ACTIONS_MODULE0 => \"[project]/src/app/notes/[id]/page.tsx [app-rsc] (ecmascript)\", ACTIONS_MODULE1 => \"[project]/src/app/actions.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+          "async": false,
+          "exportedName": "saveQuizResult",
+          "filename": "src/app/actions.ts"
+        }
+      },
+      "layer": {
+        "app/notes/[id]/page": "action-browser"
+      },
+      "exportedName": "saveQuizResult",
+      "filename": "src/app/actions.ts"
+    }
+  },
+  "edge": {}
+}

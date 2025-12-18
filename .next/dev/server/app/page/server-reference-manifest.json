@@ -1,0 +1,65 @@
+{
+  "node": {
+    "4029b1f2a07c9a7d620d4b958168233797a4861b20": {
+      "workers": {
+        "app/page": {
+          "moduleId": "[project]/.next-internal/server/app/page/actions.js { ACTIONS_MODULE0 => \"[project]/src/app/actions.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+          "async": false,
+          "exportedName": "uploadPdf",
+          "filename": "src/app/actions.ts"
+        }
+      },
+      "layer": {
+        "app/page": "rsc"
+      },
+      "exportedName": "uploadPdf",
+      "filename": "src/app/actions.ts"
+    },
+    "409078de68a41a43e66f0601878397a73538990768": {
+      "workers": {
+        "app/page": {
+          "moduleId": "[project]/.next-internal/server/app/page/actions.js { ACTIONS_MODULE0 => \"[project]/src/app/actions.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+          "async": false,
+          "exportedName": "generateStudyGuide",
+          "filename": "src/app/actions.ts"
+        }
+      },
+      "layer": {
+        "app/page": "rsc"
+      },
+      "exportedName": "generateStudyGuide",
+      "filename": "src/app/actions.ts"
+    },
+    "40f43fc974ff6928b7b3a2e6912cea9dbb69f4517b": {
+      "workers": {
+        "app/page": {
+          "moduleId": "[project]/.next-internal/server/app/page/actions.js { ACTIONS_MODULE0 => \"[project]/src/app/actions.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+          "async": false,
+          "exportedName": "generateQuiz",
+          "filename": "src/app/actions.ts"
+        }
+      },
+      "layer": {
+        "app/page": "rsc"
+      },
+      "exportedName": "generateQuiz",
+      "filename": "src/app/actions.ts"
+    },
+    "707237374e2ca69a57c875b3ea679e9f2e612c7182": {
+      "workers": {
+        "app/page": {
+          "moduleId": "[project]/.next-internal/server/app/page/actions.js { ACTIONS_MODULE0 => \"[project]/src/app/actions.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+          "async": false,
+          "exportedName": "saveQuizResult",
+          "filename": "src/app/actions.ts"
+        }
+      },
+      "layer": {
+        "app/page": "rsc"
+      },
+      "exportedName": "saveQuizResult",
+      "filename": "src/app/actions.ts"
+    }
+  },
+  "edge": {}
+}
