@@ -228,23 +228,33 @@ function FlashcardApp({ flashcards }) {
         setTimeout(()=>setIndex((prev)=>(prev - 1 + flashcards.length) % flashcards.length), 300);
     };
     if (flashcards.length === 0) return null;
-    return(// MAIN CONTAINER: Block layout (stacking vertically)
+    return(// MAIN CONTAINER: Added gap-12 for lots of vertical breathing room
     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-        className: "w-full mt-8 bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden block",
+        className: "w-full bg-white p-8 rounded-xl shadow-sm border border-gray-200 mt-8 flex flex-col gap-12",
         children: [
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                className: "flex justify-between items-center px-8 py-6 border-b border-gray-100 bg-white",
+                className: "flex justify-between items-center border-b border-gray-100 pb-6",
                 children: [
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("h2", {
-                        className: "text-2xl font-bold text-pink-600 tracking-tight",
-                        children: "⚡ Flashcards"
-                    }, void 0, false, {
+                        className: "text-2xl font-bold text-gray-800 tracking-tight flex items-center gap-2",
+                        children: [
+                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
+                                className: "text-3xl",
+                                children: "⚡"
+                            }, void 0, false, {
+                                fileName: "[project]/src/components/FlashcardApp.tsx",
+                                lineNumber: 34,
+                                columnNumber: 11
+                            }, this),
+                            " Flashcards"
+                        ]
+                    }, void 0, true, {
                         fileName: "[project]/src/components/FlashcardApp.tsx",
                         lineNumber: 33,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
-                        className: "text-sm font-medium text-gray-500 bg-gray-50 px-3 py-1 rounded-full border border-gray-200",
+                        className: "text-sm font-bold text-gray-500 bg-gray-100 px-4 py-2 rounded-full border border-gray-200",
                         children: [
                             index + 1,
                             " / ",
@@ -252,7 +262,7 @@ function FlashcardApp({ flashcards }) {
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/components/FlashcardApp.tsx",
-                        lineNumber: 34,
+                        lineNumber: 36,
                         columnNumber: 9
                     }, this)
                 ]
@@ -262,21 +272,21 @@ function FlashcardApp({ flashcards }) {
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                className: "w-full relative bg-white group cursor-pointer perspective-1000",
+                className: "w-full relative group cursor-pointer perspective-1000",
                 onClick: ()=>setIsFlipped(!isFlipped),
                 style: {
                     height: "500px",
                     perspective: "1000px"
                 },
                 children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                    className: "relative w-full h-full duration-500 transition-all",
+                    className: "relative w-full h-full duration-500 transition-all rounded-3xl shadow-lg",
                     style: {
                         transformStyle: "preserve-3d",
                         transform: isFlipped ? "rotateY(180deg)" : "rotateY(0deg)"
                     },
                     children: [
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                            className: "absolute inset-0 w-full h-full bg-pink-50/30 flex flex-col items-center justify-center p-12 text-center",
+                            className: "absolute inset-0 w-full h-full bg-pink-50/80 backdrop-blur-sm border-2 border-pink-100 rounded-3xl flex flex-col items-center justify-center p-12 text-center",
                             style: {
                                 backfaceVisibility: "hidden"
                             },
@@ -288,12 +298,12 @@ function FlashcardApp({ flashcards }) {
                                         children: flashcards[index].front
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/FlashcardApp.tsx",
-                                        lineNumber: 61,
+                                        lineNumber: 63,
                                         columnNumber: 15
                                     }, this)
                                 }, void 0, false, {
                                     fileName: "[project]/src/components/FlashcardApp.tsx",
-                                    lineNumber: 60,
+                                    lineNumber: 62,
                                     columnNumber: 13
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -303,22 +313,22 @@ function FlashcardApp({ flashcards }) {
                                         children: "Tap to Flip 👆"
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/FlashcardApp.tsx",
-                                        lineNumber: 68,
+                                        lineNumber: 69,
                                         columnNumber: 15
                                     }, this)
                                 }, void 0, false, {
                                     fileName: "[project]/src/components/FlashcardApp.tsx",
-                                    lineNumber: 67,
+                                    lineNumber: 68,
                                     columnNumber: 13
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/src/components/FlashcardApp.tsx",
-                            lineNumber: 55,
+                            lineNumber: 58,
                             columnNumber: 11
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                            className: "absolute inset-0 w-full h-full bg-pink-600 text-white flex flex-col items-center justify-center p-12 text-center",
+                            className: "absolute inset-0 w-full h-full bg-pink-600 text-white rounded-3xl flex flex-col items-center justify-center p-12 text-center shadow-inner",
                             style: {
                                 backfaceVisibility: "hidden",
                                 transform: "rotateY(180deg)"
@@ -331,18 +341,18 @@ function FlashcardApp({ flashcards }) {
                                         children: flashcards[index].back
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/FlashcardApp.tsx",
-                                        lineNumber: 84,
+                                        lineNumber: 85,
                                         columnNumber: 15
                                     }, this)
                                 }, void 0, false, {
                                     fileName: "[project]/src/components/FlashcardApp.tsx",
-                                    lineNumber: 83,
+                                    lineNumber: 84,
                                     columnNumber: 13
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                     className: "mt-4",
                                     children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
-                                        className: "text-xs font-bold text-white/90 uppercase tracking-widest border border-white/20 px-6 py-2 rounded-full",
+                                        className: "text-xs font-bold text-white/90 uppercase tracking-widest border-2 border-white/20 px-6 py-2 rounded-full",
                                         children: "Definition"
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/FlashcardApp.tsx",
@@ -357,58 +367,51 @@ function FlashcardApp({ flashcards }) {
                             ]
                         }, void 0, true, {
                             fileName: "[project]/src/components/FlashcardApp.tsx",
-                            lineNumber: 75,
+                            lineNumber: 77,
                             columnNumber: 11
                         }, this)
                     ]
                 }, void 0, true, {
                     fileName: "[project]/src/components/FlashcardApp.tsx",
-                    lineNumber: 46,
+                    lineNumber: 48,
                     columnNumber: 9
                 }, this)
             }, void 0, false, {
                 fileName: "[project]/src/components/FlashcardApp.tsx",
-                lineNumber: 41,
+                lineNumber: 43,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                className: "px-8 py-6 border-t border-gray-100 bg-gray-50/50",
-                children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                    className: "grid grid-cols-2 gap-4",
-                    children: [
-                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
-                            onClick: (e)=>{
-                                e.stopPropagation();
-                                prevCard();
-                            },
-                            className: "w-full py-4 bg-white border border-gray-200 hover:bg-gray-50 hover:border-gray-300 rounded-xl text-gray-700 font-semibold text-lg transition shadow-sm",
-                            children: "← Previous"
-                        }, void 0, false, {
-                            fileName: "[project]/src/components/FlashcardApp.tsx",
-                            lineNumber: 103,
-                            columnNumber: 11
-                        }, this),
-                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
-                            onClick: (e)=>{
-                                e.stopPropagation();
-                                nextCard();
-                            },
-                            className: "w-full py-4 bg-gray-900 text-white hover:bg-gray-800 rounded-xl font-semibold text-lg transition shadow-md",
-                            children: "Next Card →"
-                        }, void 0, false, {
-                            fileName: "[project]/src/components/FlashcardApp.tsx",
-                            lineNumber: 110,
-                            columnNumber: 11
-                        }, this)
-                    ]
-                }, void 0, true, {
-                    fileName: "[project]/src/components/FlashcardApp.tsx",
-                    lineNumber: 102,
-                    columnNumber: 9
-                }, this)
-            }, void 0, false, {
+                className: "grid grid-cols-2 gap-6 border-t border-gray-100 pt-6",
+                children: [
+                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
+                        onClick: (e)=>{
+                            e.stopPropagation();
+                            prevCard();
+                        },
+                        className: "w-full py-4 bg-white border-2 border-indigo-100 text-indigo-600 hover:bg-indigo-50 hover:border-indigo-200 rounded-xl font-bold text-lg transition shadow-sm",
+                        children: "← Previous"
+                    }, void 0, false, {
+                        fileName: "[project]/src/components/FlashcardApp.tsx",
+                        lineNumber: 103,
+                        columnNumber: 9
+                    }, this),
+                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
+                        onClick: (e)=>{
+                            e.stopPropagation();
+                            nextCard();
+                        },
+                        className: "w-full py-4 bg-indigo-600 text-white hover:bg-indigo-700 hover:shadow-lg rounded-xl font-bold text-lg transition shadow-md",
+                        children: "Next Card →"
+                    }, void 0, false, {
+                        fileName: "[project]/src/components/FlashcardApp.tsx",
+                        lineNumber: 110,
+                        columnNumber: 9
+                    }, this)
+                ]
+            }, void 0, true, {
                 fileName: "[project]/src/components/FlashcardApp.tsx",
-                lineNumber: 101,
+                lineNumber: 102,
                 columnNumber: 7
             }, this)
         ]
