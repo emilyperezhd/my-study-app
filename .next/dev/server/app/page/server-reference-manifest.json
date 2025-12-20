@@ -30,6 +30,36 @@
       "exportedName": "generateStudyGuide",
       "filename": "src/app/actions.ts"
     },
+    "409b10a8f76ebde8a9c653283fd0b8db06b04e0359": {
+      "workers": {
+        "app/page": {
+          "moduleId": "[project]/.next-internal/server/app/page/actions.js { ACTIONS_MODULE0 => \"[project]/src/app/actions.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+          "async": false,
+          "exportedName": "deleteCourse",
+          "filename": "src/app/actions.ts"
+        }
+      },
+      "layer": {
+        "app/page": "action-browser"
+      },
+      "exportedName": "deleteCourse",
+      "filename": "src/app/actions.ts"
+    },
+    "40b1056ec51f8d9f6ad6b2a3e1b600180be311da8d": {
+      "workers": {
+        "app/page": {
+          "moduleId": "[project]/.next-internal/server/app/page/actions.js { ACTIONS_MODULE0 => \"[project]/src/app/actions.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+          "async": false,
+          "exportedName": "generateFlashcards",
+          "filename": "src/app/actions.ts"
+        }
+      },
+      "layer": {
+        "app/page": "rsc"
+      },
+      "exportedName": "generateFlashcards",
+      "filename": "src/app/actions.ts"
+    },
     "40f43fc974ff6928b7b3a2e6912cea9dbb69f4517b": {
       "workers": {
         "app/page": {
@@ -43,6 +73,21 @@
         "app/page": "rsc"
       },
       "exportedName": "generateQuiz",
+      "filename": "src/app/actions.ts"
+    },
+    "604d9ab2e8562919b8dafb514e563e8e65bc7d7f81": {
+      "workers": {
+        "app/page": {
+          "moduleId": "[project]/.next-internal/server/app/page/actions.js { ACTIONS_MODULE0 => \"[project]/src/app/actions.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+          "async": false,
+          "exportedName": "renameCourse",
+          "filename": "src/app/actions.ts"
+        }
+      },
+      "layer": {
+        "app/page": "action-browser"
+      },
+      "exportedName": "renameCourse",
       "filename": "src/app/actions.ts"
     },
     "707237374e2ca69a57c875b3ea679e9f2e612c7182": {

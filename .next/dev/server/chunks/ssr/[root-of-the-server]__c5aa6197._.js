@@ -70,12 +70,17 @@ module.exports = mod;
 "[project]/src/app/actions.ts [app-rsc] (ecmascript)", ((__turbopack_context__) => {
 "use strict";
 
-// src/app/actions.ts
-/* __next_internal_action_entry_do_not_use__ [{"4029b1f2a07c9a7d620d4b958168233797a4861b20":"uploadPdf","409078de68a41a43e66f0601878397a73538990768":"generateStudyGuide","40f43fc974ff6928b7b3a2e6912cea9dbb69f4517b":"generateQuiz","707237374e2ca69a57c875b3ea679e9f2e612c7182":"saveQuizResult"},"",""] */ __turbopack_context__.s([
+/* __next_internal_action_entry_do_not_use__ [{"4029b1f2a07c9a7d620d4b958168233797a4861b20":"uploadPdf","409078de68a41a43e66f0601878397a73538990768":"generateStudyGuide","409b10a8f76ebde8a9c653283fd0b8db06b04e0359":"deleteCourse","40b1056ec51f8d9f6ad6b2a3e1b600180be311da8d":"generateFlashcards","40f43fc974ff6928b7b3a2e6912cea9dbb69f4517b":"generateQuiz","604d9ab2e8562919b8dafb514e563e8e65bc7d7f81":"renameCourse","707237374e2ca69a57c875b3ea679e9f2e612c7182":"saveQuizResult"},"",""] */ __turbopack_context__.s([
+    "deleteCourse",
+    ()=>deleteCourse,
+    "generateFlashcards",
+    ()=>generateFlashcards,
     "generateQuiz",
     ()=>generateQuiz,
     "generateStudyGuide",
     ()=>generateStudyGuide,
+    "renameCourse",
+    ()=>renameCourse,
     "saveQuizResult",
     ()=>saveQuizResult,
     "uploadPdf",
@@ -88,7 +93,10 @@ var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$langchain$
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$langchain$2f$openai$2f$dist$2f$chat_models$2f$index$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/@langchain/openai/dist/chat_models/index.js [app-rsc] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$langchain$2f$core$2f$dist$2f$prompts$2f$index$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__$3c$locals$3e$__ = __turbopack_context__.i("[project]/node_modules/@langchain/core/dist/prompts/index.js [app-rsc] (ecmascript) <locals>");
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$langchain$2f$core$2f$dist$2f$prompts$2f$prompt$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/@langchain/core/dist/prompts/prompt.js [app-rsc] (ecmascript)");
+// @ts-ignore
+var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$pdf2json$2f$dist$2f$pdfparser$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/pdf2json/dist/pdfparser.js [app-rsc] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$build$2f$webpack$2f$loaders$2f$next$2d$flight$2d$loader$2f$action$2d$validate$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/next/dist/build/webpack/loaders/next-flight-loader/action-validate.js [app-rsc] (ecmascript)");
+;
 ;
 ;
 ;
@@ -96,28 +104,38 @@ var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist
 ;
 async function uploadPdf(formData) {
     try {
-        console.log("1. Starting upload...");
         const file = formData.get("file");
         if (!file) throw new Error("No file found");
         const arrayBuffer = await file.arrayBuffer();
         const buffer = Buffer.from(arrayBuffer);
-        console.log("2. Extracting text with pdf2json...");
-        // @ts-ignore
-        const PDFParser = __turbopack_context__.r("[project]/node_modules/pdf2json/dist/pdfparser.cjs [app-rsc] (ecmascript)");
+        // --- ORIGINAL METHOD (With Crash Protection) ---
         const text = await new Promise((resolve, reject)=>{
-            const parser = new PDFParser(null, 1); // 1 = Raw Text Mode
+            const parser = new __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$pdf2json$2f$dist$2f$pdfparser$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["default"](null, 1); // 1 = Raw Text Mode
             parser.on("pdfParser_dataError", (errData)=>{
                 console.error(errData.parserError);
-                reject(errData.parserError);
+                resolve(""); // If it fails, just return empty text (don't crash)
             });
             parser.on("pdfParser_dataReady", ()=>{
-                const raw = parser.getRawTextContent();
-                resolve(raw);
+                try {
+                    // This is the line that was crashing on specific files.
+                    // We wrap it so if it fails, we just save a placeholder message.
+                    const raw = parser.getRawTextContent();
+                    resolve(raw);
+                } catch (error) {
+                    console.error("Text extraction error:", error);
+                    resolve("Text could not be extracted from this specific PDF.");
+                }
             });
-            parser.parseBuffer(buffer);
+            // Start parsing
+            try {
+                parser.parseBuffer(buffer);
+            } catch (e) {
+                resolve("");
+            }
         });
-        const finalContent = text.trim().length > 0 ? text : "No text found in PDF.";
-        console.log("3. Saving to DB...", finalContent.slice(0, 50));
+        // --------------------------------
+        // If text is empty (or failed), use a placeholder
+        const finalContent = typeof text === 'string' && text.trim().length > 0 ? text : "Text could not be extracted from this PDF.";
         await __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$db$2e$ts__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["db"].course.create({
             data: {
                 title: file.name,
@@ -125,7 +143,6 @@ async function uploadPdf(formData) {
             }
         });
         (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$cache$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["revalidatePath"])("/");
-        console.log("4. Done!");
     } catch (error) {
         console.error("Upload Error:", error);
     }
@@ -142,15 +159,8 @@ async function generateStudyGuide(id) {
             modelName: "gpt-4o-mini",
             openAIApiKey: process.env.OPENAI_API_KEY
         });
-        const prompt = __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$langchain$2f$core$2f$dist$2f$prompts$2f$prompt$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["PromptTemplate"].fromTemplate(`You are a strict academic tutor. Create a structured study guide for the provided text.
-       
-       Rules:
-       1. OUTPUT STRICT HTML ONLY. Do not use Markdown.
-       2. Use <h1> for the main title.
-       3. Use <h2> for section headers with emojis.
-       4. Use <ul>/<li> for bullets.
-       5. Use <strong> for key terms.
-       
+        const prompt = __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$langchain$2f$core$2f$dist$2f$prompts$2f$prompt$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["PromptTemplate"].fromTemplate(`You are a strict academic tutor. Create a structured study guide.
+       Rules: HTML format only, use <h1>, <h2>, <ul>, <strong>. No Markdown.
        Text: {text}`);
         const chain = prompt.pipe(model);
         const response = await chain.invoke({
@@ -185,30 +195,17 @@ async function generateQuiz(id) {
                 response_format: {
                     type: "json_object"
                 }
-            } // Force JSON
+            }
         });
-        const prompt = __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$langchain$2f$core$2f$dist$2f$prompts$2f$prompt$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["PromptTemplate"].fromTemplate(`You are a teacher. Generate 5 difficult multiple-choice questions based on the provided text.
-       
-       Return the output as a JSON object with this exact structure:
-       {{
-         "questions": [
-           {{
-             "question": "Question text here",
-             "options": ["Option A", "Option B", "Option C", "Option D"],
-             "answer": "Option B"
-           }}
-         ]
-       }}
-       
-       Text content: {text}`);
+        const prompt = __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$langchain$2f$core$2f$dist$2f$prompts$2f$prompt$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["PromptTemplate"].fromTemplate(`Generate 5 difficult multiple-choice questions based on the provided text.
+       Return JSON object: {{ "questions": [ {{ "question": "...", "options": ["..."], "answer": "..." }} ] }}
+       Text: {text}`);
         const chain = prompt.pipe(model);
         const response = await chain.invoke({
             text: note.content.slice(0, 15000)
         });
-        // Parse the JSON string from OpenAI
         const content = typeof response.content === 'string' ? response.content : JSON.stringify(response.content);
         const data = JSON.parse(content);
-        // Save to Database
         await __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$db$2e$ts__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["db"].question.createMany({
             data: data.questions.map((q)=>({
                     courseId: id,
@@ -224,6 +221,7 @@ async function generateQuiz(id) {
 }
 async function saveQuizResult(courseId, score, total) {
     try {
+        // We already fixed the database table issue, so this will work now.
         await __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$db$2e$ts__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["db"].quizResult.create({
             data: {
                 courseId,
@@ -231,9 +229,78 @@ async function saveQuizResult(courseId, score, total) {
                 total
             }
         });
-        (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$cache$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["revalidatePath"])(`/notes/${courseId}`); // Refresh the page to show the new badge
+        (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$cache$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["revalidatePath"])(`/notes/${courseId}`);
     } catch (error) {
         console.error("Save Error:", error);
+    }
+}
+async function deleteCourse(id) {
+    try {
+        await __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$db$2e$ts__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["db"].course.delete({
+            where: {
+                id: id
+            }
+        });
+        (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$cache$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["revalidatePath"])("/");
+    } catch (error) {
+        console.error("Delete Error:", error);
+    }
+}
+async function renameCourse(id, newTitle) {
+    try {
+        await __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$db$2e$ts__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["db"].course.update({
+            where: {
+                id: id
+            },
+            data: {
+                title: newTitle
+            }
+        });
+        (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$cache$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["revalidatePath"])("/");
+    } catch (error) {
+        console.error("Rename Error:", error);
+    }
+}
+async function generateFlashcards(id) {
+    try {
+        const note = await __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$db$2e$ts__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["db"].course.findUnique({
+            where: {
+                id: id
+            }
+        });
+        if (!note || !note.content) throw new Error("Note not found");
+        const model = new __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$langchain$2f$openai$2f$dist$2f$chat_models$2f$index$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["ChatOpenAI"]({
+            modelName: "gpt-4o-mini",
+            openAIApiKey: process.env.OPENAI_API_KEY,
+            temperature: 0.1,
+            modelKwargs: {
+                response_format: {
+                    type: "json_object"
+                }
+            }
+        });
+        // Prompt for JSON Flashcards
+        const prompt = __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$langchain$2f$core$2f$dist$2f$prompts$2f$prompt$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["PromptTemplate"].fromTemplate(`Generate 15 study flashcards based on the provided text.
+       Focus on key definitions, formulas, and concepts.
+       Return JSON object: {{ "flashcards": [ {{ "front": "Term", "back": "Definition" }} ] }}
+       Text: {text}`);
+        const chain = prompt.pipe(model);
+        const response = await chain.invoke({
+            text: note.content.slice(0, 15000)
+        });
+        const content = typeof response.content === 'string' ? response.content : JSON.stringify(response.content);
+        const data = JSON.parse(content);
+        // Save to DB
+        await __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$db$2e$ts__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["db"].flashcard.createMany({
+            data: data.flashcards.map((f)=>({
+                    courseId: id,
+                    front: f.front,
+                    back: f.back
+                }))
+        });
+        (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$cache$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["revalidatePath"])(`/notes/${id}`);
+    } catch (error) {
+        console.error("Flashcard Gen Error:", error);
     }
 }
 ;
@@ -241,12 +308,18 @@ async function saveQuizResult(courseId, score, total) {
     uploadPdf,
     generateStudyGuide,
     generateQuiz,
-    saveQuizResult
+    saveQuizResult,
+    deleteCourse,
+    renameCourse,
+    generateFlashcards
 ]);
 (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$build$2f$webpack$2f$loaders$2f$next$2d$flight$2d$loader$2f$server$2d$reference$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["registerServerReference"])(uploadPdf, "4029b1f2a07c9a7d620d4b958168233797a4861b20", null);
 (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$build$2f$webpack$2f$loaders$2f$next$2d$flight$2d$loader$2f$server$2d$reference$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["registerServerReference"])(generateStudyGuide, "409078de68a41a43e66f0601878397a73538990768", null);
 (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$build$2f$webpack$2f$loaders$2f$next$2d$flight$2d$loader$2f$server$2d$reference$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["registerServerReference"])(generateQuiz, "40f43fc974ff6928b7b3a2e6912cea9dbb69f4517b", null);
 (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$build$2f$webpack$2f$loaders$2f$next$2d$flight$2d$loader$2f$server$2d$reference$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["registerServerReference"])(saveQuizResult, "707237374e2ca69a57c875b3ea679e9f2e612c7182", null);
+(0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$build$2f$webpack$2f$loaders$2f$next$2d$flight$2d$loader$2f$server$2d$reference$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["registerServerReference"])(deleteCourse, "409b10a8f76ebde8a9c653283fd0b8db06b04e0359", null);
+(0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$build$2f$webpack$2f$loaders$2f$next$2d$flight$2d$loader$2f$server$2d$reference$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["registerServerReference"])(renameCourse, "604d9ab2e8562919b8dafb514e563e8e65bc7d7f81", null);
+(0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$build$2f$webpack$2f$loaders$2f$next$2d$flight$2d$loader$2f$server$2d$reference$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["registerServerReference"])(generateFlashcards, "40b1056ec51f8d9f6ad6b2a3e1b600180be311da8d", null);
 }),
 "[project]/src/components/QuizApp.tsx [app-rsc] (client reference proxy) <module evaluation>", ((__turbopack_context__) => {
 "use strict";
@@ -303,7 +376,7 @@ var __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$app$2f$actions$2e$ts_
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$client$2f$app$2d$dir$2f$link$2e$react$2d$server$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/next/dist/client/app-dir/link.react-server.js [app-rsc] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$api$2f$navigation$2e$react$2d$server$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__$3c$locals$3e$__ = __turbopack_context__.i("[project]/node_modules/next/dist/api/navigation.react-server.js [app-rsc] (ecmascript) <locals>");
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$client$2f$components$2f$navigation$2e$react$2d$server$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/next/dist/client/components/navigation.react-server.js [app-rsc] (ecmascript)");
-var __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$QuizApp$2e$tsx__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/src/components/QuizApp.tsx [app-rsc] (ecmascript)");
+var __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$QuizApp$2e$tsx__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/src/components/QuizApp.tsx [app-rsc] (ecmascript)"); // <--- FIXED: Long path that works for you
 ;
 ;
 ;
@@ -324,13 +397,18 @@ const $$RSC_SERVER_ACTION_1 = async function action($$ACTION_CLOSURE_BOUND) {
 (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$build$2f$webpack$2f$loaders$2f$next$2d$flight$2d$loader$2f$server$2d$reference$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["registerServerReference"])($$RSC_SERVER_ACTION_1, "4060d7de527aaa22ee3567c7a37b6942aadf151553", null);
 async function NotePage({ params }) {
     const { id } = await params;
-    // Fetch note and questions
+    // 1. Fetch note + questions + results (sorted by newest)
     const note = await __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$db$2e$ts__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["db"].course.findUnique({
         where: {
             id: id
         },
         include: {
-            questions: true
+            questions: true,
+            quizResults: {
+                orderBy: {
+                    createdAt: 'desc'
+                }
+            }
         }
     });
     if (!note) return (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$client$2f$components$2f$navigation$2e$react$2d$server$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["notFound"])();
@@ -347,7 +425,7 @@ async function NotePage({ params }) {
                                 children: note.title
                             }, void 0, false, {
                                 fileName: "[project]/src/app/notes/[id]/page.tsx",
-                                lineNumber: 28,
+                                lineNumber: 33,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -358,13 +436,13 @@ async function NotePage({ params }) {
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/app/notes/[id]/page.tsx",
-                                lineNumber: 29,
+                                lineNumber: 34,
                                 columnNumber: 11
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/app/notes/[id]/page.tsx",
-                        lineNumber: 27,
+                        lineNumber: 32,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$client$2f$app$2d$dir$2f$link$2e$react$2d$server$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["default"], {
@@ -373,13 +451,13 @@ async function NotePage({ params }) {
                         children: "← Back to Dashboard"
                     }, void 0, false, {
                         fileName: "[project]/src/app/notes/[id]/page.tsx",
-                        lineNumber: 33,
+                        lineNumber: 38,
                         columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/src/app/notes/[id]/page.tsx",
-                lineNumber: 26,
+                lineNumber: 31,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -390,7 +468,7 @@ async function NotePage({ params }) {
                         children: "Raw Text Content:"
                     }, void 0, false, {
                         fileName: "[project]/src/app/notes/[id]/page.tsx",
-                        lineNumber: 40,
+                        lineNumber: 45,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -398,13 +476,13 @@ async function NotePage({ params }) {
                         children: note.content
                     }, void 0, false, {
                         fileName: "[project]/src/app/notes/[id]/page.tsx",
-                        lineNumber: 41,
+                        lineNumber: 46,
                         columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/src/app/notes/[id]/page.tsx",
-                lineNumber: 39,
+                lineNumber: 44,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -415,7 +493,7 @@ async function NotePage({ params }) {
                         children: "AI Study Tools 🤖"
                     }, void 0, false, {
                         fileName: "[project]/src/app/notes/[id]/page.tsx",
-                        lineNumber: 48,
+                        lineNumber: 53,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -432,7 +510,7 @@ async function NotePage({ params }) {
                                             children: "📝 Generate Study Guide"
                                         }, void 0, false, {
                                             fileName: "[project]/src/app/notes/[id]/page.tsx",
-                                            lineNumber: 61,
+                                            lineNumber: 66,
                                             columnNumber: 17
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -440,18 +518,18 @@ async function NotePage({ params }) {
                                             children: "Create a summarized study guide with key concepts."
                                         }, void 0, false, {
                                             fileName: "[project]/src/app/notes/[id]/page.tsx",
-                                            lineNumber: 62,
+                                            lineNumber: 67,
                                             columnNumber: 17
                                         }, this)
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/src/app/notes/[id]/page.tsx",
-                                    lineNumber: 57,
+                                    lineNumber: 62,
                                     columnNumber: 13
                                 }, this)
                             }, void 0, false, {
                                 fileName: "[project]/src/app/notes/[id]/page.tsx",
-                                lineNumber: 53,
+                                lineNumber: 58,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("form", {
@@ -466,7 +544,7 @@ async function NotePage({ params }) {
                                             children: note.questions.length > 0 ? "✅ Quiz Generated" : "🧪 Generate Quiz"
                                         }, void 0, false, {
                                             fileName: "[project]/src/app/notes/[id]/page.tsx",
-                                            lineNumber: 81,
+                                            lineNumber: 86,
                                             columnNumber: 15
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -474,38 +552,125 @@ async function NotePage({ params }) {
                                             children: note.questions.length > 0 ? "Scroll down to take the quiz!" : "Create a multiple choice test based on this file."
                                         }, void 0, false, {
                                             fileName: "[project]/src/app/notes/[id]/page.tsx",
-                                            lineNumber: 84,
+                                            lineNumber: 89,
                                             columnNumber: 15
                                         }, this)
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/src/app/notes/[id]/page.tsx",
-                                    lineNumber: 73,
+                                    lineNumber: 78,
                                     columnNumber: 13
                                 }, this)
                             }, void 0, false, {
                                 fileName: "[project]/src/app/notes/[id]/page.tsx",
-                                lineNumber: 69,
+                                lineNumber: 74,
                                 columnNumber: 11
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/app/notes/[id]/page.tsx",
-                        lineNumber: 50,
+                        lineNumber: 55,
                         columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/src/app/notes/[id]/page.tsx",
-                lineNumber: 47,
+                lineNumber: 52,
                 columnNumber: 7
             }, this),
-            note.questions.length > 0 && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$QuizApp$2e$tsx__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["default"], {
-                questions: note.questions,
-                courseId: id
+            note.questions.length > 0 && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                className: "mt-8",
+                children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$QuizApp$2e$tsx__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["default"], {
+                    questions: note.questions,
+                    courseId: id
+                }, void 0, false, {
+                    fileName: "[project]/src/app/notes/[id]/page.tsx",
+                    lineNumber: 103,
+                    columnNumber: 13
+                }, this)
             }, void 0, false, {
                 fileName: "[project]/src/app/notes/[id]/page.tsx",
-                lineNumber: 97,
+                lineNumber: 102,
+                columnNumber: 9
+            }, this),
+            note.quizResults.length > 0 && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                className: "bg-white p-6 rounded-xl shadow-sm border border-gray-200 mt-8 animate-in fade-in slide-in-from-bottom-4",
+                children: [
+                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("h3", {
+                        className: "font-bold text-xl mb-4 text-gray-800",
+                        children: "📊 Quiz History"
+                    }, void 0, false, {
+                        fileName: "[project]/src/app/notes/[id]/page.tsx",
+                        lineNumber: 110,
+                        columnNumber: 13
+                    }, this),
+                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                        className: "space-y-3",
+                        children: note.quizResults.map((result, index)=>{
+                            const percent = Math.round(result.score / result.total * 100);
+                            const colorClass = percent >= 80 ? 'text-green-600 bg-green-50' : percent >= 50 ? 'text-orange-600 bg-orange-50' : 'text-red-600 bg-red-50';
+                            return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                className: "flex justify-between items-center p-4 border rounded-lg hover:bg-gray-50 transition",
+                                children: [
+                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                        children: [
+                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
+                                                className: "font-semibold text-gray-700",
+                                                children: [
+                                                    "Attempt ",
+                                                    note.quizResults.length - index
+                                                ]
+                                            }, void 0, true, {
+                                                fileName: "[project]/src/app/notes/[id]/page.tsx",
+                                                lineNumber: 119,
+                                                columnNumber: 33
+                                            }, this),
+                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
+                                                className: "text-xs text-gray-400",
+                                                suppressHydrationWarning: true,
+                                                children: result.createdAt.toLocaleString()
+                                            }, void 0, false, {
+                                                fileName: "[project]/src/app/notes/[id]/page.tsx",
+                                                lineNumber: 121,
+                                                columnNumber: 33
+                                            }, this)
+                                        ]
+                                    }, void 0, true, {
+                                        fileName: "[project]/src/app/notes/[id]/page.tsx",
+                                        lineNumber: 118,
+                                        columnNumber: 29
+                                    }, this),
+                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                        className: `px-4 py-2 rounded-full font-bold ${colorClass}`,
+                                        children: [
+                                            result.score,
+                                            " / ",
+                                            result.total,
+                                            " (",
+                                            percent,
+                                            "%)"
+                                        ]
+                                    }, void 0, true, {
+                                        fileName: "[project]/src/app/notes/[id]/page.tsx",
+                                        lineNumber: 125,
+                                        columnNumber: 29
+                                    }, this)
+                                ]
+                            }, result.id, true, {
+                                fileName: "[project]/src/app/notes/[id]/page.tsx",
+                                lineNumber: 117,
+                                columnNumber: 25
+                            }, this);
+                        })
+                    }, void 0, false, {
+                        fileName: "[project]/src/app/notes/[id]/page.tsx",
+                        lineNumber: 111,
+                        columnNumber: 13
+                    }, this)
+                ]
+            }, void 0, true, {
+                fileName: "[project]/src/app/notes/[id]/page.tsx",
+                lineNumber: 109,
                 columnNumber: 9
             }, this),
             note.summary && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -516,7 +681,7 @@ async function NotePage({ params }) {
                         children: "🎓 Your Study Guide"
                     }, void 0, false, {
                         fileName: "[project]/src/app/notes/[id]/page.tsx",
-                        lineNumber: 103,
+                        lineNumber: 138,
                         columnNumber: 11
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -526,19 +691,19 @@ async function NotePage({ params }) {
                         }
                     }, void 0, false, {
                         fileName: "[project]/src/app/notes/[id]/page.tsx",
-                        lineNumber: 104,
+                        lineNumber: 139,
                         columnNumber: 11
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/src/app/notes/[id]/page.tsx",
-                lineNumber: 102,
+                lineNumber: 137,
                 columnNumber: 9
             }, this)
         ]
     }, void 0, true, {
         fileName: "[project]/src/app/notes/[id]/page.tsx",
-        lineNumber: 23,
+        lineNumber: 28,
         columnNumber: 5
     }, this);
 }
@@ -549,6 +714,9 @@ async function NotePage({ params }) {
 __turbopack_context__.s([]);
 var __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$app$2f$notes$2f5b$id$5d2f$page$2e$tsx__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/src/app/notes/[id]/page.tsx [app-rsc] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$app$2f$actions$2e$ts__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/src/app/actions.ts [app-rsc] (ecmascript)");
+;
+;
+;
 ;
 ;
 ;
@@ -569,8 +737,14 @@ __turbopack_context__.s([
     ()=>__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$app$2f$notes$2f5b$id$5d2f$page$2e$tsx__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["$$RSC_SERVER_ACTION_1"],
     "409078de68a41a43e66f0601878397a73538990768",
     ()=>__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$app$2f$actions$2e$ts__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["generateStudyGuide"],
+    "409b10a8f76ebde8a9c653283fd0b8db06b04e0359",
+    ()=>__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$app$2f$actions$2e$ts__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["deleteCourse"],
+    "40b1056ec51f8d9f6ad6b2a3e1b600180be311da8d",
+    ()=>__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$app$2f$actions$2e$ts__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["generateFlashcards"],
     "40f43fc974ff6928b7b3a2e6912cea9dbb69f4517b",
     ()=>__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$app$2f$actions$2e$ts__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["generateQuiz"],
+    "604d9ab2e8562919b8dafb514e563e8e65bc7d7f81",
+    ()=>__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$app$2f$actions$2e$ts__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["renameCourse"],
     "707237374e2ca69a57c875b3ea679e9f2e612c7182",
     ()=>__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$app$2f$actions$2e$ts__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["saveQuizResult"]
 ]);

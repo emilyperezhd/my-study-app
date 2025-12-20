@@ -1,15 +1,17 @@
 import { db } from "../lib/db";
 import { uploadPdf } from "./actions";
-import Link from "next/link"; // <--- This makes things clickable
+import CourseCard from "../components/CourseCard"; // <--- Import our new component
 
 export default async function Home() {
-  // Fetch existing uploads
-  const courses = await db.course.findMany();
+  // Fetch existing uploads, newest first
+  const courses = await db.course.findMany({
+    orderBy: { createdAt: 'desc' }
+  });
 
   return (
     <main className="min-h-screen p-10 bg-gray-50">
       <div className="max-w-4xl mx-auto space-y-10">
-        
+
         {/* Header */}
         <h1 className="text-4xl font-bold text-gray-900">My Study Portal 🎓</h1>
 
@@ -41,23 +43,10 @@ export default async function Home() {
         {/* LIST OF UPLOADS */}
         <div>
           <h2 className="text-2xl font-bold mb-4">Your Documents</h2>
+          
           <div className="grid gap-4 md:grid-cols-2">
             {courses.map((course) => (
-              <Link 
-                key={course.id} 
-                href={`/notes/${course.id}`}
-                className="block bg-white p-6 rounded-xl shadow-sm border border-gray-200 hover:shadow-md hover:border-blue-500 transition cursor-pointer"
-              >
-                <div className="flex justify-between items-start mb-2">
-                  <h3 className="font-bold text-lg text-blue-600 truncate">{course.title}</h3>
-                  <span className="text-xs text-gray-400">
-                    {course.createdAt.toLocaleDateString()}
-                  </span>
-                </div>
-                <p className="text-sm text-gray-500 line-clamp-3">
-                  {course.content || "No text extracted"}
-                </p>
-              </Link>
+              <CourseCard key={course.id} course={course} />
             ))}
 
             {courses.length === 0 && (
