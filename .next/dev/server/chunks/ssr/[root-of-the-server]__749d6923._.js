@@ -70,9 +70,11 @@ module.exports = mod;
 "[project]/src/app/actions.ts [app-rsc] (ecmascript)", ((__turbopack_context__) => {
 "use strict";
 
-/* __next_internal_action_entry_do_not_use__ [{"4029b1f2a07c9a7d620d4b958168233797a4861b20":"uploadPdf","409078de68a41a43e66f0601878397a73538990768":"generateStudyGuide","409b10a8f76ebde8a9c653283fd0b8db06b04e0359":"deleteCourse","40b1056ec51f8d9f6ad6b2a3e1b600180be311da8d":"generateFlashcards","40f43fc974ff6928b7b3a2e6912cea9dbb69f4517b":"generateQuiz","40fb690e8484cf7700be5874e06ca30bec5ad4966b":"generatePracticeExam","604d9ab2e8562919b8dafb514e563e8e65bc7d7f81":"renameCourse","707237374e2ca69a57c875b3ea679e9f2e612c7182":"saveQuizResult","70aae445aa96797072f5882989150971aec1840174":"saveExamResult"},"",""] */ __turbopack_context__.s([
+/* __next_internal_action_entry_do_not_use__ [{"4029b1f2a07c9a7d620d4b958168233797a4861b20":"uploadPdf","405f0c08a6259be969c69361ec5853ab9d7ccfe00c":"generateCrossword","409078de68a41a43e66f0601878397a73538990768":"generateStudyGuide","409b10a8f76ebde8a9c653283fd0b8db06b04e0359":"deleteCourse","40b1056ec51f8d9f6ad6b2a3e1b600180be311da8d":"generateFlashcards","40f43fc974ff6928b7b3a2e6912cea9dbb69f4517b":"generateQuiz","40fb690e8484cf7700be5874e06ca30bec5ad4966b":"generatePracticeExam","604d9ab2e8562919b8dafb514e563e8e65bc7d7f81":"renameCourse","707237374e2ca69a57c875b3ea679e9f2e612c7182":"saveQuizResult","70aae445aa96797072f5882989150971aec1840174":"saveExamResult"},"",""] */ __turbopack_context__.s([
     "deleteCourse",
     ()=>deleteCourse,
+    "generateCrossword",
+    ()=>generateCrossword,
     "generateFlashcards",
     ()=>generateFlashcards,
     "generatePracticeExam",
@@ -112,34 +114,50 @@ async function uploadPdf(formData) {
         if (!file) throw new Error("No file found");
         const arrayBuffer = await file.arrayBuffer();
         const buffer = Buffer.from(arrayBuffer);
-        // --- ORIGINAL METHOD (With Crash Protection) ---
         const text = await new Promise((resolve, reject)=>{
-            const parser = new __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$pdf2json$2f$dist$2f$pdfparser$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["default"](null, 1); // 1 = Raw Text Mode
+            const parser = new __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$pdf2json$2f$dist$2f$pdfparser$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["default"](null, 1);
             parser.on("pdfParser_dataError", (errData)=>{
-                console.error(errData.parserError);
-                resolve(""); // If it fails, just return empty text (don't crash)
+                console.error("PDF Parser Error:", errData.parserError);
+                resolve("");
             });
-            parser.on("pdfParser_dataReady", ()=>{
+            parser.on("pdfParser_dataReady", (pdfData)=>{
                 try {
-                    // This is the line that was crashing on specific files.
-                    // We wrap it so if it fails, we just save a placeholder message.
-                    const raw = parser.getRawTextContent();
-                    resolve(raw);
+                    if (!pdfData || !pdfData.formImage || !pdfData.formImage.Pages) {
+                        resolve("");
+                        return;
+                    }
+                    let extractedText = "";
+                    // @ts-ignore
+                    pdfData.formImage.Pages.forEach((page)=>{
+                        // @ts-ignore
+                        if (page.Texts) {
+                            // @ts-ignore
+                            page.Texts.forEach((textItem)=>{
+                                // @ts-ignore
+                                if (textItem.R) {
+                                    // @ts-ignore
+                                    textItem.R.forEach((run)=>{
+                                        if (run.T) extractedText += decodeURIComponent(run.T) + " ";
+                                    });
+                                }
+                            });
+                        }
+                        extractedText += "\n";
+                    });
+                    resolve(extractedText);
                 } catch (error) {
-                    console.error("Text extraction error:", error);
-                    resolve("Text could not be extracted from this specific PDF.");
+                    console.error("Manual extraction failed:", error);
+                    resolve("");
                 }
             });
-            // Start parsing
             try {
                 parser.parseBuffer(buffer);
             } catch (e) {
+                console.error("Buffer error:", e);
                 resolve("");
             }
         });
-        // --------------------------------
-        // If text is empty (or failed), use a placeholder
-        const finalContent = typeof text === 'string' && text.trim().length > 0 ? text : "Text could not be extracted from this PDF.";
+        const finalContent = typeof text === 'string' && text.trim().length > 0 ? text : "⚠️ Text could not be extracted.";
         await __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$db$2e$ts__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["db"].course.create({
             data: {
                 title: file.name,
@@ -149,6 +167,33 @@ async function uploadPdf(formData) {
         (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$cache$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["revalidatePath"])("/");
     } catch (error) {
         console.error("Upload Error:", error);
+    }
+}
+async function deleteCourse(id) {
+    try {
+        await __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$db$2e$ts__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["db"].course.delete({
+            where: {
+                id: id
+            }
+        });
+        (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$cache$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["revalidatePath"])("/");
+    } catch (error) {
+        console.error("Delete Error:", error);
+    }
+}
+async function renameCourse(id, newTitle) {
+    try {
+        await __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$db$2e$ts__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["db"].course.update({
+            where: {
+                id: id
+            },
+            data: {
+                title: newTitle
+            }
+        });
+        (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$cache$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["revalidatePath"])("/");
+    } catch (error) {
+        console.error("Rename Error:", error);
     }
 }
 async function generateStudyGuide(id) {
@@ -168,7 +213,7 @@ async function generateStudyGuide(id) {
        Text: {text}`);
         const chain = prompt.pipe(model);
         const response = await chain.invoke({
-            text: note.content.slice(0, 15000)
+            text: note.content.slice(0, 25000)
         });
         await __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$db$2e$ts__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["db"].course.update({
             where: {
@@ -206,7 +251,7 @@ async function generateQuiz(id) {
        Text: {text}`);
         const chain = prompt.pipe(model);
         const response = await chain.invoke({
-            text: note.content.slice(0, 15000)
+            text: note.content.slice(0, 25000)
         });
         const content = typeof response.content === 'string' ? response.content : JSON.stringify(response.content);
         const data = JSON.parse(content);
@@ -221,48 +266,6 @@ async function generateQuiz(id) {
         (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$cache$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["revalidatePath"])(`/notes/${id}`);
     } catch (error) {
         console.error("AI Quiz Error:", error);
-    }
-}
-async function saveQuizResult(courseId, score, total) {
-    try {
-        // We already fixed the database table issue, so this will work now.
-        await __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$db$2e$ts__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["db"].quizResult.create({
-            data: {
-                courseId,
-                score,
-                total
-            }
-        });
-        (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$cache$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["revalidatePath"])(`/notes/${courseId}`);
-    } catch (error) {
-        console.error("Save Error:", error);
-    }
-}
-async function deleteCourse(id) {
-    try {
-        await __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$db$2e$ts__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["db"].course.delete({
-            where: {
-                id: id
-            }
-        });
-        (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$cache$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["revalidatePath"])("/");
-    } catch (error) {
-        console.error("Delete Error:", error);
-    }
-}
-async function renameCourse(id, newTitle) {
-    try {
-        await __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$db$2e$ts__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["db"].course.update({
-            where: {
-                id: id
-            },
-            data: {
-                title: newTitle
-            }
-        });
-        (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$cache$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["revalidatePath"])("/");
-    } catch (error) {
-        console.error("Rename Error:", error);
     }
 }
 async function generateFlashcards(id) {
@@ -283,18 +286,16 @@ async function generateFlashcards(id) {
                 }
             }
         });
-        // Prompt for JSON Flashcards
         const prompt = __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$langchain$2f$core$2f$dist$2f$prompts$2f$prompt$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["PromptTemplate"].fromTemplate(`Generate 15 study flashcards based on the provided text.
        Focus on key definitions, formulas, and concepts.
        Return JSON object: {{ "flashcards": [ {{ "front": "Term", "back": "Definition" }} ] }}
        Text: {text}`);
         const chain = prompt.pipe(model);
         const response = await chain.invoke({
-            text: note.content.slice(0, 15000)
+            text: note.content.slice(0, 25000)
         });
         const content = typeof response.content === 'string' ? response.content : JSON.stringify(response.content);
         const data = JSON.parse(content);
-        // Save to DB
         await __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$db$2e$ts__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["db"].flashcard.createMany({
             data: data.flashcards.map((f)=>({
                     courseId: id,
@@ -325,16 +326,12 @@ async function generatePracticeExam(id) {
                 }
             }
         });
-        // Ask for 20 questions with explanations
         const prompt = __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$langchain$2f$core$2f$dist$2f$prompts$2f$prompt$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["PromptTemplate"].fromTemplate(`Generate a Practice Midterm Exam with 20 difficult multiple-choice questions based on the text.
-       Include an "explanation" field for each question explaining why the answer is correct.
-       
+       Include an "explanation" field explaining the correct answer.
        Return JSON object: 
        {{ "questions": [ {{ "question": "...", "options": ["..."], "answer": "...", "explanation": "..." }} ] }}
-       
        Text: {text}`);
         const chain = prompt.pipe(model);
-        // Use a larger chunk of text for the exam
         const response = await chain.invoke({
             text: note.content.slice(0, 30000)
         });
@@ -346,12 +343,198 @@ async function generatePracticeExam(id) {
                     question: q.question,
                     options: q.options,
                     answer: q.answer,
-                    explanation: q.explanation // Save the explanation
+                    explanation: q.explanation
                 }))
         });
         (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$cache$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["revalidatePath"])(`/notes/${id}`);
     } catch (error) {
         console.error("Exam Gen Error:", error);
+    }
+}
+async function generateCrossword(id) {
+    try {
+        const note = await __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$db$2e$ts__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["db"].course.findUnique({
+            where: {
+                id: id
+            }
+        });
+        if (!note || !note.content) throw new Error("Note not found");
+        const model = new __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$langchain$2f$openai$2f$dist$2f$chat_models$2f$index$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["ChatOpenAI"]({
+            modelName: "gpt-4o",
+            openAIApiKey: process.env.OPENAI_API_KEY,
+            temperature: 0.2,
+            modelKwargs: {
+                response_format: {
+                    type: "json_object"
+                }
+            }
+        });
+        // 1. Get just the words and clues
+        const prompt = __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$langchain$2f$core$2f$dist$2f$prompts$2f$prompt$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["PromptTemplate"].fromTemplate(`Extract 20 glossary terms from the text for a crossword puzzle.
+       Rules:
+       - Single word answers only (no spaces/hyphens).
+       - Max 10 characters per word.
+       - Uppercase only.
+       
+       Return JSON:
+       {{
+         "terms": [
+           {{ "word": "JAVA", "clue": "A programming language" }}
+         ]
+       }}
+       
+       Text: {text}`);
+        const chain = prompt.pipe(model);
+        const response = await chain.invoke({
+            text: note.content.slice(0, 30000)
+        });
+        const content = typeof response.content === 'string' ? response.content : JSON.stringify(response.content);
+        const data = JSON.parse(content);
+        const terms = data.terms;
+        // 2. Build the Grid Manually (Simple Layout Algorithm)
+        const gridSize = 12; // Slightly larger to fit more words
+        let grid = Array(gridSize).fill(null).map(()=>Array(gridSize).fill(""));
+        let placedWords = [];
+        // Sort by length (longest first)
+        terms.sort((a, b)=>b.word.length - a.word.length);
+        // Place first word in center
+        const firstWord = terms[0];
+        if (firstWord) {
+            const startCol = Math.floor((gridSize - firstWord.word.length) / 2);
+            const startRow = Math.floor(gridSize / 2);
+            for(let i = 0; i < firstWord.word.length; i++){
+                grid[startRow][startCol + i] = firstWord.word[i];
+            }
+            placedWords.push({
+                ...firstWord,
+                row: startRow,
+                col: startCol,
+                dir: 'across'
+            });
+        }
+        // Try to place other words
+        for(let i = 1; i < terms.length; i++){
+            const currentTerm = terms[i];
+            const word = currentTerm.word;
+            let placed = false;
+            // Try to find an intersection
+            for (const placedWord of placedWords){
+                if (placed) break;
+                // Check every letter overlap
+                for(let j = 0; j < word.length; j++){
+                    if (placed) break;
+                    for(let k = 0; k < placedWord.word.length; k++){
+                        if (word[j] === placedWord.word[k]) {
+                            // Found a common letter!
+                            // If placed word is Across, we try Down. If Down, we try Across.
+                            const newDir = placedWord.dir === 'across' ? 'down' : 'across';
+                            // Calculate potential start pos
+                            let newRow = placedWord.row;
+                            let newCol = placedWord.col;
+                            if (placedWord.dir === 'across') {
+                                // Placed is horizontal at (row, col). Common char is at (row, col+k)
+                                // New word is Vertical. Common char is at index j.
+                                // So new word starts at (row - j, col + k)
+                                newRow = placedWord.row - j;
+                                newCol = placedWord.col + k;
+                            } else {
+                                // Placed is vertical at (row, col). Common char is at (row+k, col)
+                                // New word is Horizontal. Common char is at index j.
+                                // So new word starts at (row + k, col - j)
+                                newRow = placedWord.row + k;
+                                newCol = placedWord.col - j;
+                            }
+                            // Validate Bounds
+                            if (newRow < 0 || newCol < 0 || newDir === 'across' && newCol + word.length > gridSize || newDir === 'down' && newRow + word.length > gridSize) {
+                                continue;
+                            }
+                            // Validate Collisions
+                            let collision = false;
+                            for(let c = 0; c < word.length; c++){
+                                const r = newDir === 'across' ? newRow : newRow + c;
+                                const col = newDir === 'across' ? newCol + c : newCol;
+                                // Cell must be empty OR match exactly
+                                if (grid[r][col] !== "" && grid[r][col] !== word[c]) {
+                                    collision = true;
+                                    break;
+                                }
+                            }
+                            if (!collision) {
+                                // Place it!
+                                for(let c = 0; c < word.length; c++){
+                                    const r = newDir === 'across' ? newRow : newRow + c;
+                                    const col = newDir === 'across' ? newCol + c : newCol;
+                                    grid[r][col] = word[c];
+                                }
+                                placedWords.push({
+                                    ...currentTerm,
+                                    row: newRow,
+                                    col: newCol,
+                                    dir: newDir
+                                });
+                                placed = true;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        // 3. Generate Final Output Structure
+        const numbers = Array(gridSize).fill(null).map(()=>Array(gridSize).fill(0));
+        const clues = {
+            across: [],
+            down: []
+        };
+        let clueNum = 1;
+        // Sort placed words by position to number them correctly (reading order)
+        placedWords.sort((a, b)=>a.row - b.row || a.col - b.col);
+        placedWords.forEach((pw)=>{
+            // Assign number if not exists
+            let num = numbers[pw.row][pw.col];
+            if (num === 0) {
+                num = clueNum++;
+                numbers[pw.row][pw.col] = num;
+            }
+            if (pw.dir === 'across') {
+                clues.across.push({
+                    number: num,
+                    clue: pw.clue
+                });
+            } else {
+                clues.down.push({
+                    number: num,
+                    clue: pw.clue
+                });
+            }
+        });
+        const finalData = {
+            grid,
+            numbers,
+            clues
+        };
+        await __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$db$2e$ts__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["db"].crossword.create({
+            data: {
+                courseId: id,
+                puzzle: finalData
+            }
+        });
+        (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$cache$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["revalidatePath"])(`/notes/${id}`);
+    } catch (error) {
+        console.error("Crossword Gen Error:", error);
+    }
+}
+async function saveQuizResult(courseId, score, total) {
+    try {
+        await __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$db$2e$ts__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["db"].quizResult.create({
+            data: {
+                courseId,
+                score,
+                total
+            }
+        });
+        (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$cache$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["revalidatePath"])(`/notes/${courseId}`);
+    } catch (error) {
+        console.error("Save Error:", error);
     }
 }
 async function saveExamResult(courseId, score, total) {
@@ -371,23 +554,25 @@ async function saveExamResult(courseId, score, total) {
 ;
 (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$build$2f$webpack$2f$loaders$2f$next$2d$flight$2d$loader$2f$action$2d$validate$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["ensureServerEntryExports"])([
     uploadPdf,
-    generateStudyGuide,
-    generateQuiz,
-    saveQuizResult,
     deleteCourse,
     renameCourse,
+    generateStudyGuide,
+    generateQuiz,
     generateFlashcards,
     generatePracticeExam,
+    generateCrossword,
+    saveQuizResult,
     saveExamResult
 ]);
 (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$build$2f$webpack$2f$loaders$2f$next$2d$flight$2d$loader$2f$server$2d$reference$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["registerServerReference"])(uploadPdf, "4029b1f2a07c9a7d620d4b958168233797a4861b20", null);
-(0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$build$2f$webpack$2f$loaders$2f$next$2d$flight$2d$loader$2f$server$2d$reference$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["registerServerReference"])(generateStudyGuide, "409078de68a41a43e66f0601878397a73538990768", null);
-(0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$build$2f$webpack$2f$loaders$2f$next$2d$flight$2d$loader$2f$server$2d$reference$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["registerServerReference"])(generateQuiz, "40f43fc974ff6928b7b3a2e6912cea9dbb69f4517b", null);
-(0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$build$2f$webpack$2f$loaders$2f$next$2d$flight$2d$loader$2f$server$2d$reference$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["registerServerReference"])(saveQuizResult, "707237374e2ca69a57c875b3ea679e9f2e612c7182", null);
 (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$build$2f$webpack$2f$loaders$2f$next$2d$flight$2d$loader$2f$server$2d$reference$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["registerServerReference"])(deleteCourse, "409b10a8f76ebde8a9c653283fd0b8db06b04e0359", null);
 (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$build$2f$webpack$2f$loaders$2f$next$2d$flight$2d$loader$2f$server$2d$reference$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["registerServerReference"])(renameCourse, "604d9ab2e8562919b8dafb514e563e8e65bc7d7f81", null);
+(0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$build$2f$webpack$2f$loaders$2f$next$2d$flight$2d$loader$2f$server$2d$reference$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["registerServerReference"])(generateStudyGuide, "409078de68a41a43e66f0601878397a73538990768", null);
+(0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$build$2f$webpack$2f$loaders$2f$next$2d$flight$2d$loader$2f$server$2d$reference$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["registerServerReference"])(generateQuiz, "40f43fc974ff6928b7b3a2e6912cea9dbb69f4517b", null);
 (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$build$2f$webpack$2f$loaders$2f$next$2d$flight$2d$loader$2f$server$2d$reference$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["registerServerReference"])(generateFlashcards, "40b1056ec51f8d9f6ad6b2a3e1b600180be311da8d", null);
 (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$build$2f$webpack$2f$loaders$2f$next$2d$flight$2d$loader$2f$server$2d$reference$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["registerServerReference"])(generatePracticeExam, "40fb690e8484cf7700be5874e06ca30bec5ad4966b", null);
+(0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$build$2f$webpack$2f$loaders$2f$next$2d$flight$2d$loader$2f$server$2d$reference$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["registerServerReference"])(generateCrossword, "405f0c08a6259be969c69361ec5853ab9d7ccfe00c", null);
+(0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$build$2f$webpack$2f$loaders$2f$next$2d$flight$2d$loader$2f$server$2d$reference$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["registerServerReference"])(saveQuizResult, "707237374e2ca69a57c875b3ea679e9f2e612c7182", null);
 (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$build$2f$webpack$2f$loaders$2f$next$2d$flight$2d$loader$2f$server$2d$reference$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["registerServerReference"])(saveExamResult, "70aae445aa96797072f5882989150971aec1840174", null);
 }),
 "[project]/.next-internal/server/app/page/actions.js { ACTIONS_MODULE0 => \"[project]/src/app/actions.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript) <locals>", ((__turbopack_context__) => {
@@ -406,6 +591,7 @@ var __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$app$2f$actions$2e$ts_
 ;
 ;
 ;
+;
 }),
 "[project]/.next-internal/server/app/page/actions.js { ACTIONS_MODULE0 => \"[project]/src/app/actions.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)", ((__turbopack_context__) => {
 "use strict";
@@ -413,6 +599,8 @@ var __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$app$2f$actions$2e$ts_
 __turbopack_context__.s([
     "4029b1f2a07c9a7d620d4b958168233797a4861b20",
     ()=>__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$app$2f$actions$2e$ts__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["uploadPdf"],
+    "405f0c08a6259be969c69361ec5853ab9d7ccfe00c",
+    ()=>__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$app$2f$actions$2e$ts__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["generateCrossword"],
     "409078de68a41a43e66f0601878397a73538990768",
     ()=>__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$app$2f$actions$2e$ts__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["generateStudyGuide"],
     "409b10a8f76ebde8a9c653283fd0b8db06b04e0359",

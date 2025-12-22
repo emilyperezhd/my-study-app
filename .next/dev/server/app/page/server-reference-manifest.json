@@ -15,6 +15,21 @@
       "exportedName": "uploadPdf",
       "filename": "src/app/actions.ts"
     },
+    "405f0c08a6259be969c69361ec5853ab9d7ccfe00c": {
+      "workers": {
+        "app/page": {
+          "moduleId": "[project]/.next-internal/server/app/page/actions.js { ACTIONS_MODULE0 => \"[project]/src/app/actions.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+          "async": false,
+          "exportedName": "generateCrossword",
+          "filename": "src/app/actions.ts"
+        }
+      },
+      "layer": {
+        "app/page": "rsc"
+      },
+      "exportedName": "generateCrossword",
+      "filename": "src/app/actions.ts"
+    },
     "409078de68a41a43e66f0601878397a73538990768": {
       "workers": {
         "app/page": {

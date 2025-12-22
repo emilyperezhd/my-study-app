@@ -1,5 +1,80 @@
 {
   "node": {
+    "40255d6011a6624df39a52063ef35c5cfe1bf62114": {
+      "workers": {
+        "app/notes/[id]/page": {
+          "moduleId": "[project]/.next-internal/server/app/notes/[id]/page/actions.js { ACTIONS_MODULE0 => \"[project]/src/app/notes/[id]/page.tsx [app-rsc] (ecmascript)\", ACTIONS_MODULE1 => \"[project]/src/app/actions.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+          "async": false,
+          "exportedName": "$$RSC_SERVER_ACTION_2",
+          "filename": "src/app/notes/[id]/page.tsx"
+        }
+      },
+      "layer": {
+        "app/notes/[id]/page": "rsc"
+      },
+      "filename": "src/app/notes/[id]/page.tsx",
+      "exportedName": "$$RSC_SERVER_ACTION_2"
+    },
+    "402a91be692d9b09d68995a31edf77d245db9db81c": {
+      "workers": {
+        "app/notes/[id]/page": {
+          "moduleId": "[project]/.next-internal/server/app/notes/[id]/page/actions.js { ACTIONS_MODULE0 => \"[project]/src/app/notes/[id]/page.tsx [app-rsc] (ecmascript)\", ACTIONS_MODULE1 => \"[project]/src/app/actions.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+          "async": false,
+          "exportedName": "$$RSC_SERVER_ACTION_0",
+          "filename": "src/app/notes/[id]/page.tsx"
+        }
+      },
+      "layer": {
+        "app/notes/[id]/page": "rsc"
+      },
+      "filename": "src/app/notes/[id]/page.tsx",
+      "exportedName": "$$RSC_SERVER_ACTION_0"
+    },
+    "405a8647b9ae12dc2393b9863645aeaf626a4e50c0": {
+      "workers": {
+        "app/notes/[id]/page": {
+          "moduleId": "[project]/.next-internal/server/app/notes/[id]/page/actions.js { ACTIONS_MODULE0 => \"[project]/src/app/notes/[id]/page.tsx [app-rsc] (ecmascript)\", ACTIONS_MODULE1 => \"[project]/src/app/actions.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+          "async": false,
+          "exportedName": "$$RSC_SERVER_ACTION_3",
+          "filename": "src/app/notes/[id]/page.tsx"
+        }
+      },
+      "layer": {
+        "app/notes/[id]/page": "rsc"
+      },
+      "filename": "src/app/notes/[id]/page.tsx",
+      "exportedName": "$$RSC_SERVER_ACTION_3"
+    },
+    "4060d7de527aaa22ee3567c7a37b6942aadf151553": {
+      "workers": {
+        "app/notes/[id]/page": {
+          "moduleId": "[project]/.next-internal/server/app/notes/[id]/page/actions.js { ACTIONS_MODULE0 => \"[project]/src/app/notes/[id]/page.tsx [app-rsc] (ecmascript)\", ACTIONS_MODULE1 => \"[project]/src/app/actions.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+          "async": false,
+          "exportedName": "$$RSC_SERVER_ACTION_1",
+          "filename": "src/app/notes/[id]/page.tsx"
+        }
+      },
+      "layer": {
+        "app/notes/[id]/page": "rsc"
+      },
+      "filename": "src/app/notes/[id]/page.tsx",
+      "exportedName": "$$RSC_SERVER_ACTION_1"
+    },
+    "40cf22193ec36e9aa73a4054bb276424c46b4f991f": {
+      "workers": {
+        "app/notes/[id]/page": {
+          "moduleId": "[project]/.next-internal/server/app/notes/[id]/page/actions.js { ACTIONS_MODULE0 => \"[project]/src/app/notes/[id]/page.tsx [app-rsc] (ecmascript)\", ACTIONS_MODULE1 => \"[project]/src/app/actions.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+          "async": false,
+          "exportedName": "$$RSC_SERVER_ACTION_4",
+          "filename": "src/app/notes/[id]/page.tsx"
+        }
+      },
+      "layer": {
+        "app/notes/[id]/page": "rsc"
+      },
+      "filename": "src/app/notes/[id]/page.tsx",
+      "exportedName": "$$RSC_SERVER_ACTION_4"
+    },
     "4029b1f2a07c9a7d620d4b958168233797a4861b20": {
       "workers": {
         "app/notes/[id]/page": {
@@ -21,6 +96,28 @@
       },
       "filename": "src/app/actions.ts",
       "exportedName": "uploadPdf"
+    },
+    "405f0c08a6259be969c69361ec5853ab9d7ccfe00c": {
+      "workers": {
+        "app/notes/[id]/page": {
+          "moduleId": "[project]/.next-internal/server/app/notes/[id]/page/actions.js { ACTIONS_MODULE0 => \"[project]/src/app/notes/[id]/page.tsx [app-rsc] (ecmascript)\", ACTIONS_MODULE1 => \"[project]/src/app/actions.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+          "async": false,
+          "exportedName": "generateCrossword",
+          "filename": "src/app/actions.ts"
+        },
+        "app/page": {
+          "moduleId": "[project]/.next-internal/server/app/page/actions.js { ACTIONS_MODULE0 => \"[project]/src/app/actions.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+          "async": false,
+          "exportedName": "generateCrossword",
+          "filename": "src/app/actions.ts"
+        }
+      },
+      "layer": {
+        "app/notes/[id]/page": "rsc",
+        "app/page": "rsc"
+      },
+      "filename": "src/app/actions.ts",
+      "exportedName": "generateCrossword"
     },
     "409078de68a41a43e66f0601878397a73538990768": {
       "workers": {
@@ -197,66 +294,6 @@
       },
       "filename": "src/app/actions.ts",
       "exportedName": "saveExamResult"
-    },
-    "40255d6011a6624df39a52063ef35c5cfe1bf62114": {
-      "workers": {
-        "app/notes/[id]/page": {
-          "moduleId": "[project]/.next-internal/server/app/notes/[id]/page/actions.js { ACTIONS_MODULE0 => \"[project]/src/app/notes/[id]/page.tsx [app-rsc] (ecmascript)\", ACTIONS_MODULE1 => \"[project]/src/app/actions.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
-          "async": false,
-          "exportedName": "$$RSC_SERVER_ACTION_2",
-          "filename": "src/app/notes/[id]/page.tsx"
-        }
-      },
-      "layer": {
-        "app/notes/[id]/page": "rsc"
-      },
-      "filename": "src/app/notes/[id]/page.tsx",
-      "exportedName": "$$RSC_SERVER_ACTION_2"
-    },
-    "402a91be692d9b09d68995a31edf77d245db9db81c": {
-      "workers": {
-        "app/notes/[id]/page": {
-          "moduleId": "[project]/.next-internal/server/app/notes/[id]/page/actions.js { ACTIONS_MODULE0 => \"[project]/src/app/notes/[id]/page.tsx [app-rsc] (ecmascript)\", ACTIONS_MODULE1 => \"[project]/src/app/actions.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
-          "async": false,
-          "exportedName": "$$RSC_SERVER_ACTION_0",
-          "filename": "src/app/notes/[id]/page.tsx"
-        }
-      },
-      "layer": {
-        "app/notes/[id]/page": "rsc"
-      },
-      "filename": "src/app/notes/[id]/page.tsx",
-      "exportedName": "$$RSC_SERVER_ACTION_0"
-    },
-    "405a8647b9ae12dc2393b9863645aeaf626a4e50c0": {
-      "workers": {
-        "app/notes/[id]/page": {
-          "moduleId": "[project]/.next-internal/server/app/notes/[id]/page/actions.js { ACTIONS_MODULE0 => \"[project]/src/app/notes/[id]/page.tsx [app-rsc] (ecmascript)\", ACTIONS_MODULE1 => \"[project]/src/app/actions.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
-          "async": false,
-          "exportedName": "$$RSC_SERVER_ACTION_3",
-          "filename": "src/app/notes/[id]/page.tsx"
-        }
-      },
-      "layer": {
-        "app/notes/[id]/page": "rsc"
-      },
-      "filename": "src/app/notes/[id]/page.tsx",
-      "exportedName": "$$RSC_SERVER_ACTION_3"
-    },
-    "4060d7de527aaa22ee3567c7a37b6942aadf151553": {
-      "workers": {
-        "app/notes/[id]/page": {
-          "moduleId": "[project]/.next-internal/server/app/notes/[id]/page/actions.js { ACTIONS_MODULE0 => \"[project]/src/app/notes/[id]/page.tsx [app-rsc] (ecmascript)\", ACTIONS_MODULE1 => \"[project]/src/app/actions.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
-          "async": false,
-          "exportedName": "$$RSC_SERVER_ACTION_1",
-          "filename": "src/app/notes/[id]/page.tsx"
-        }
-      },
-      "layer": {
-        "app/notes/[id]/page": "rsc"
-      },
-      "filename": "src/app/notes/[id]/page.tsx",
-      "exportedName": "$$RSC_SERVER_ACTION_1"
     }
   },
   "edge": {},

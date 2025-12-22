@@ -1,12 +1,9 @@
-[00:00:19.261] Server  LOG      ✓ Ready in 15.6s
-[00:00:30.296] Server  LOG      ○ Compiling / ...
-[00:03:26.806] Server  LOG      ○ Compiling /notes/[id] ...
-[00:14:18.679] Server  LOG     Warning: Setting up fake worker.
-[00:14:20.218] Server  LOG     Warning: TT: complementing a missing function tail
-[00:14:22.561] Server  LOG     Warning: TT: complementing a missing function tail
-[00:14:23.960] Server  LOG     Warning: TT: complementing a missing function tail
-[00:14:24.577] Server  LOG     Warning: TT: complementing a missing function tail
-[00:14:30.946] Server  LOG     Warning: TT: complementing a missing function tail
-[00:14:31.486] Server  LOG     Warning: TT: complementing a missing function tail
-[00:14:33.648] Server  LOG     Warning: TT: complementing a missing function tail
-[00:14:39.108] Server  LOG     Warning: TT: complementing a missing function tail
+[00:05:04.562] Server  LOG      ✓ Ready in 177.7s
+[00:05:13.505] Server  LOG      ○ Compiling /notes/[id] ...
+[00:21:45.856] Server  LOG      ✓ Compiled in 51.1s
+[00:25:57.671] Server  LOG      ○ Compiling /_not-found/page ...
+[00:28:11.938] Browser ERROR   uncaughtError: TypeError: undefined is not an object (evaluating 'userGrid[r][c]')
+[00:33:36.198] Server  LOG      ✓ Compiled in 61.4s
+[00:33:37.745] Server  WARN     ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+[00:33:41.547] Server  WARN     ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+[00:34:10.817] Server  LOG      ✓ Compiled in 0ms

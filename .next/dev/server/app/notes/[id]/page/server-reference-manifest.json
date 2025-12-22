@@ -60,6 +60,21 @@
       "exportedName": "$$RSC_SERVER_ACTION_1",
       "filename": "src/app/notes/[id]/page.tsx"
     },
+    "40cf22193ec36e9aa73a4054bb276424c46b4f991f": {
+      "workers": {
+        "app/notes/[id]/page": {
+          "moduleId": "[project]/.next-internal/server/app/notes/[id]/page/actions.js { ACTIONS_MODULE0 => \"[project]/src/app/notes/[id]/page.tsx [app-rsc] (ecmascript)\", ACTIONS_MODULE1 => \"[project]/src/app/actions.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+          "async": false,
+          "exportedName": "$$RSC_SERVER_ACTION_4",
+          "filename": "src/app/notes/[id]/page.tsx"
+        }
+      },
+      "layer": {
+        "app/notes/[id]/page": "rsc"
+      },
+      "exportedName": "$$RSC_SERVER_ACTION_4",
+      "filename": "src/app/notes/[id]/page.tsx"
+    },
     "4029b1f2a07c9a7d620d4b958168233797a4861b20": {
       "workers": {
         "app/notes/[id]/page": {
@@ -73,6 +88,21 @@
         "app/notes/[id]/page": "rsc"
       },
       "exportedName": "uploadPdf",
+      "filename": "src/app/actions.ts"
+    },
+    "405f0c08a6259be969c69361ec5853ab9d7ccfe00c": {
+      "workers": {
+        "app/notes/[id]/page": {
+          "moduleId": "[project]/.next-internal/server/app/notes/[id]/page/actions.js { ACTIONS_MODULE0 => \"[project]/src/app/notes/[id]/page.tsx [app-rsc] (ecmascript)\", ACTIONS_MODULE1 => \"[project]/src/app/actions.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+          "async": false,
+          "exportedName": "generateCrossword",
+          "filename": "src/app/actions.ts"
+        }
+      },
+      "layer": {
+        "app/notes/[id]/page": "rsc"
+      },
+      "exportedName": "generateCrossword",
       "filename": "src/app/actions.ts"
     },
     "409078de68a41a43e66f0601878397a73538990768": {
