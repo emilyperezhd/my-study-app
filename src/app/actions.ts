@@ -8,7 +8,7 @@ import { PromptTemplate } from "@langchain/core/prompts";
 // @ts-ignore
 import PDFParser from "pdf2json";
 
-// --- 1. UPLOAD ACTION ---
+// --- 1. UPLOAD ACTION (Stable pdf2json) ---
 export async function uploadPdf(formData: FormData) {
   try {
     const file = formData.get("file") as File;
@@ -17,8 +17,12 @@ export async function uploadPdf(formData: FormData) {
     const arrayBuffer = await file.arrayBuffer();
     const buffer = Buffer.from(arrayBuffer);
 
+    // CRASH-PROOF EXTRACTION LOGIC
     const text = await new Promise<string>((resolve, reject) => {
-        const parser = new PDFParser(null, 1);
+        
+        // FIX: Tell TypeScript to ignore the next line because '1' is correct for this library
+        // @ts-ignore
+        const parser = new PDFParser(null, 1); 
 
         parser.on("pdfParser_dataError", (errData: any) => {
             console.error("PDF Parser Error:", errData.parserError);
@@ -66,7 +70,7 @@ export async function uploadPdf(formData: FormData) {
 
     const finalContent = typeof text === 'string' && text.trim().length > 0 
         ? text 
-        : "⚠️ Text could not be extracted.";
+        : "⚠️ Text could not be extracted. This PDF might be an image scan.";
 
     await db.course.create({
       data: {
@@ -81,11 +85,13 @@ export async function uploadPdf(formData: FormData) {
   }
 }
 
-// --- 2. MANAGEMENT ACTIONS ---
+// --- 2. MANAGEMENT ACTIONS (Delete/Rename) ---
 
 export async function deleteCourse(id: string) {
   try {
-    await db.course.delete({ where: { id: id } });
+    await db.course.delete({
+      where: { id: id }
+    });
     revalidatePath("/");
   } catch (error) {
     console.error("Delete Error:", error);
@@ -94,7 +100,10 @@ export async function deleteCourse(id: string) {
 
 export async function renameCourse(id: string, newTitle: string) {
   try {
-    await db.course.update({ where: { id: id }, data: { title: newTitle } });
+    await db.course.update({
+      where: { id: id },
+      data: { title: newTitle }
+    });
     revalidatePath("/");
   } catch (error) {
     console.error("Rename Error:", error);
@@ -253,8 +262,6 @@ export async function generatePracticeExam(id: string) {
   }
 }
 
-// --- SMART CROSSWORD GENERATOR ---
-// Uses a custom algorithm to build the grid instead of trusting the AI to draw it.
 export async function generateCrossword(id: string) {
   try {
     const note = await db.course.findUnique({ where: { id: id } });
@@ -267,7 +274,6 @@ export async function generateCrossword(id: string) {
       modelKwargs: { response_format: { type: "json_object" } } 
     });
 
-    // 1. Get just the words and clues
     const prompt = PromptTemplate.fromTemplate(
       `Extract 20 glossary terms from the text for a crossword puzzle.
        Rules:
@@ -292,15 +298,13 @@ export async function generateCrossword(id: string) {
     
     const terms = data.terms;
 
-    // 2. Build the Grid Manually (Simple Layout Algorithm)
-    const gridSize = 12; // Slightly larger to fit more words
+    // Build the Grid Manually
+    const gridSize = 12; 
     let grid = Array(gridSize).fill(null).map(() => Array(gridSize).fill(""));
     let placedWords = [] as any[];
 
-    // Sort by length (longest first)
     terms.sort((a: any, b: any) => b.word.length - a.word.length);
 
-    // Place first word in center
     const firstWord = terms[0];
     if (firstWord) {
         const startCol = Math.floor((gridSize - firstWord.word.length) / 2);
@@ -311,57 +315,39 @@ export async function generateCrossword(id: string) {
         placedWords.push({ ...firstWord, row: startRow, col: startCol, dir: 'across' });
     }
 
-    // Try to place other words
     for (let i = 1; i < terms.length; i++) {
         const currentTerm = terms[i];
         const word = currentTerm.word;
         let placed = false;
 
-        // Try to find an intersection
         for (const placedWord of placedWords) {
             if (placed) break;
-            
-            // Check every letter overlap
             for (let j = 0; j < word.length; j++) {
                 if (placed) break;
                 for (let k = 0; k < placedWord.word.length; k++) {
                     if (word[j] === placedWord.word[k]) {
-                        // Found a common letter!
-                        // If placed word is Across, we try Down. If Down, we try Across.
                         const newDir = placedWord.dir === 'across' ? 'down' : 'across';
-                        
-                        // Calculate potential start pos
                         let newRow = placedWord.row;
                         let newCol = placedWord.col;
                         
                         if (placedWord.dir === 'across') {
-                            // Placed is horizontal at (row, col). Common char is at (row, col+k)
-                            // New word is Vertical. Common char is at index j.
-                            // So new word starts at (row - j, col + k)
                             newRow = placedWord.row - j;
                             newCol = placedWord.col + k;
                         } else {
-                            // Placed is vertical at (row, col). Common char is at (row+k, col)
-                            // New word is Horizontal. Common char is at index j.
-                            // So new word starts at (row + k, col - j)
                             newRow = placedWord.row + k;
                             newCol = placedWord.col - j;
                         }
 
-                        // Validate Bounds
                         if (newRow < 0 || newCol < 0 || 
                             (newDir === 'across' && newCol + word.length > gridSize) ||
                             (newDir === 'down' && newRow + word.length > gridSize)) {
                             continue;
                         }
 
-                        // Validate Collisions
                         let collision = false;
                         for (let c = 0; c < word.length; c++) {
                             const r = newDir === 'across' ? newRow : newRow + c;
                             const col = newDir === 'across' ? newCol + c : newCol;
-                            
-                            // Cell must be empty OR match exactly
                             if (grid[r][col] !== "" && grid[r][col] !== word[c]) {
                                 collision = true;
                                 break;
@@ -369,7 +355,6 @@ export async function generateCrossword(id: string) {
                         }
 
                         if (!collision) {
-                            // Place it!
                             for (let c = 0; c < word.length; c++) {
                                 const r = newDir === 'across' ? newRow : newRow + c;
                                 const col = newDir === 'across' ? newCol + c : newCol;
@@ -384,22 +369,18 @@ export async function generateCrossword(id: string) {
         }
     }
 
-    // 3. Generate Final Output Structure
     const numbers = Array(gridSize).fill(null).map(() => Array(gridSize).fill(0));
     const clues = { across: [] as any[], down: [] as any[] };
     let clueNum = 1;
 
-    // Sort placed words by position to number them correctly (reading order)
     placedWords.sort((a, b) => (a.row - b.row) || (a.col - b.col));
 
     placedWords.forEach((pw) => {
-        // Assign number if not exists
         let num = numbers[pw.row][pw.col];
         if (num === 0) {
             num = clueNum++;
             numbers[pw.row][pw.col] = num;
         }
-        
         if (pw.dir === 'across') {
             clues.across.push({ number: num, clue: pw.clue });
         } else {
