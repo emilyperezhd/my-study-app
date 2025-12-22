@@ -1,3 +1,12 @@
-[00:00:16.887] Server  LOG      ✓ Ready in 13.6s
-[00:00:25.371] Server  LOG      ○ Compiling / ...
-[00:01:44.014] Server  LOG      ○ Compiling /notes/[id] ...
+[00:00:19.261] Server  LOG      ✓ Ready in 15.6s
+[00:00:30.296] Server  LOG      ○ Compiling / ...
+[00:03:26.806] Server  LOG      ○ Compiling /notes/[id] ...
+[00:14:18.679] Server  LOG     Warning: Setting up fake worker.
+[00:14:20.218] Server  LOG     Warning: TT: complementing a missing function tail
+[00:14:22.561] Server  LOG     Warning: TT: complementing a missing function tail
+[00:14:23.960] Server  LOG     Warning: TT: complementing a missing function tail
+[00:14:24.577] Server  LOG     Warning: TT: complementing a missing function tail
+[00:14:30.946] Server  LOG     Warning: TT: complementing a missing function tail
+[00:14:31.486] Server  LOG     Warning: TT: complementing a missing function tail
+[00:14:33.648] Server  LOG     Warning: TT: complementing a missing function tail
+[00:14:39.108] Server  LOG     Warning: TT: complementing a missing function tail

@@ -213,3 +213,66 @@ export async function generateFlashcards(id: string) {
     console.error("Flashcard Gen Error:", error);
   }
 }
+
+// --- PRACTICE EXAM ACTIONS ---
+
+export async function generatePracticeExam(id: string) {
+  try {
+    const note = await db.course.findUnique({ where: { id: id } });
+    if (!note || !note.content) throw new Error("Note not found");
+
+    const model = new ChatOpenAI({
+      modelName: "gpt-4o-mini",
+      openAIApiKey: process.env.OPENAI_API_KEY,
+      temperature: 0.1, 
+      modelKwargs: { response_format: { type: "json_object" } } 
+    });
+
+    // Ask for 20 questions with explanations
+    const prompt = PromptTemplate.fromTemplate(
+      `Generate a Practice Midterm Exam with 20 difficult multiple-choice questions based on the text.
+       Include an "explanation" field for each question explaining why the answer is correct.
+       
+       Return JSON object: 
+       {{ "questions": [ {{ "question": "...", "options": ["..."], "answer": "...", "explanation": "..." }} ] }}
+       
+       Text: {text}`
+    );
+
+    const chain = prompt.pipe(model);
+    // Use a larger chunk of text for the exam
+    const response = await chain.invoke({ text: note.content.slice(0, 30000) });
+    
+    const content = typeof response.content === 'string' ? response.content : JSON.stringify(response.content);
+    const data = JSON.parse(content);
+    
+    await db.examQuestion.createMany({
+      data: data.questions.map((q: any) => ({
+        courseId: id,
+        question: q.question,
+        options: q.options,
+        answer: q.answer,
+        explanation: q.explanation // Save the explanation
+      }))
+    });
+
+    revalidatePath(`/notes/${id}`);
+  } catch (error) {
+    console.error("Exam Gen Error:", error);
+  }
+}
+
+export async function saveExamResult(courseId: string, score: number, total: number) {
+  try {
+    await db.examResult.create({
+      data: {
+        courseId,
+        score,
+        total,
+      },
+    });
+    revalidatePath(`/notes/${courseId}`);
+  } catch (error) {
+    console.error("Exam Save Error:", error);
+  }
+}

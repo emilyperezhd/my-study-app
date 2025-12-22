@@ -1,3 +1,5 @@
+// prisma/schema.prisma
+
 generator client {
   provider = "prisma-client-js"
 }
@@ -14,10 +16,18 @@ model Course {
   summary   String?  @db.Text
   createdAt DateTime @default(now())
   
-  questions   Question[]
-  quizResults QuizResult[]
-  flashcards  Flashcard[]  // <--- The code needs this relation!
+  questions     Question[]
+  quizResults   QuizResult[]
+  flashcards    Flashcard[]
+  examQuestions ExamQuestion[]
+  examResults   ExamResult[]
+  
+  // --- NEW ---
+  crosswords    Crossword[]
 }
+
+// ... (Keep Question, QuizResult, Flashcard, ExamQuestion, ExamResult models exactly as they were) ...
+// (I am omitting them here to save space, but DO NOT DELETE THEM from your file)
 
 model Question {
   id        String   @id @default(cuid())
@@ -42,7 +52,37 @@ model Flashcard {
   id        String   @id @default(cuid())
   courseId  String
   course    Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
-  
   front     String   @db.Text
   back      String   @db.Text
+}
+
+model ExamQuestion {
+  id          String   @id @default(cuid())
+  courseId    String
+  course      Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  question    String   @db.Text
+  options     String[] 
+  answer      String   
+  explanation String   @db.Text 
+  createdAt   DateTime @default(now())
+}
+
+model ExamResult {
+  id        String   @id @default(cuid())
+  courseId  String
+  course    Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  score     Int
+  total     Int
+  createdAt DateTime @default(now())
+}
+
+// --- NEW MODEL ---
+model Crossword {
+  id        String   @id @default(cuid())
+  courseId  String
+  course    Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  
+  puzzle    Json     // Stores the entire Grid + Clues structure
+  
+  createdAt DateTime @default(now())
 }

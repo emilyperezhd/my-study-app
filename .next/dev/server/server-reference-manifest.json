@@ -110,6 +110,28 @@
       "filename": "src/app/actions.ts",
       "exportedName": "generateQuiz"
     },
+    "40fb690e8484cf7700be5874e06ca30bec5ad4966b": {
+      "workers": {
+        "app/notes/[id]/page": {
+          "moduleId": "[project]/.next-internal/server/app/notes/[id]/page/actions.js { ACTIONS_MODULE0 => \"[project]/src/app/notes/[id]/page.tsx [app-rsc] (ecmascript)\", ACTIONS_MODULE1 => \"[project]/src/app/actions.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+          "async": false,
+          "exportedName": "generatePracticeExam",
+          "filename": "src/app/actions.ts"
+        },
+        "app/page": {
+          "moduleId": "[project]/.next-internal/server/app/page/actions.js { ACTIONS_MODULE0 => \"[project]/src/app/actions.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+          "async": false,
+          "exportedName": "generatePracticeExam",
+          "filename": "src/app/actions.ts"
+        }
+      },
+      "layer": {
+        "app/notes/[id]/page": "rsc",
+        "app/page": "rsc"
+      },
+      "filename": "src/app/actions.ts",
+      "exportedName": "generatePracticeExam"
+    },
     "604d9ab2e8562919b8dafb514e563e8e65bc7d7f81": {
       "workers": {
         "app/notes/[id]/page": {
@@ -154,6 +176,28 @@
       "filename": "src/app/actions.ts",
       "exportedName": "saveQuizResult"
     },
+    "70aae445aa96797072f5882989150971aec1840174": {
+      "workers": {
+        "app/notes/[id]/page": {
+          "moduleId": "[project]/.next-internal/server/app/notes/[id]/page/actions.js { ACTIONS_MODULE0 => \"[project]/src/app/notes/[id]/page.tsx [app-rsc] (ecmascript)\", ACTIONS_MODULE1 => \"[project]/src/app/actions.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+          "async": false,
+          "exportedName": "saveExamResult",
+          "filename": "src/app/actions.ts"
+        },
+        "app/page": {
+          "moduleId": "[project]/.next-internal/server/app/page/actions.js { ACTIONS_MODULE0 => \"[project]/src/app/actions.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+          "async": false,
+          "exportedName": "saveExamResult",
+          "filename": "src/app/actions.ts"
+        }
+      },
+      "layer": {
+        "app/notes/[id]/page": "action-browser",
+        "app/page": "rsc"
+      },
+      "filename": "src/app/actions.ts",
+      "exportedName": "saveExamResult"
+    },
     "40255d6011a6624df39a52063ef35c5cfe1bf62114": {
       "workers": {
         "app/notes/[id]/page": {
@@ -183,6 +227,21 @@
       },
       "filename": "src/app/notes/[id]/page.tsx",
       "exportedName": "$$RSC_SERVER_ACTION_0"
+    },
+    "405a8647b9ae12dc2393b9863645aeaf626a4e50c0": {
+      "workers": {
+        "app/notes/[id]/page": {
+          "moduleId": "[project]/.next-internal/server/app/notes/[id]/page/actions.js { ACTIONS_MODULE0 => \"[project]/src/app/notes/[id]/page.tsx [app-rsc] (ecmascript)\", ACTIONS_MODULE1 => \"[project]/src/app/actions.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+          "async": false,
+          "exportedName": "$$RSC_SERVER_ACTION_3",
+          "filename": "src/app/notes/[id]/page.tsx"
+        }
+      },
+      "layer": {
+        "app/notes/[id]/page": "rsc"
+      },
+      "filename": "src/app/notes/[id]/page.tsx",
+      "exportedName": "$$RSC_SERVER_ACTION_3"
     },
     "4060d7de527aaa22ee3567c7a37b6942aadf151553": {
       "workers": {

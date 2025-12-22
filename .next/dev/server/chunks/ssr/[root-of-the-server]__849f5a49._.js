@@ -410,12 +410,12 @@ var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$build$2f$webpack$2f$loaders$2f$next$2d$flight$2d$loader$2f$server$2d$reference$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/next/dist/build/webpack/loaders/next-flight-loader/server-reference.js [app-rsc] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$app$2d$render$2f$encryption$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/next/dist/server/app-render/encryption.js [app-rsc] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$db$2e$ts__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/src/lib/db.ts [app-rsc] (ecmascript)");
-var __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$app$2f$actions$2e$ts__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/src/app/actions.ts [app-rsc] (ecmascript)"); // <--- Added generateFlashcards
+var __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$app$2f$actions$2e$ts__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/src/app/actions.ts [app-rsc] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$client$2f$app$2d$dir$2f$link$2e$react$2d$server$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/next/dist/client/app-dir/link.react-server.js [app-rsc] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$api$2f$navigation$2e$react$2d$server$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__$3c$locals$3e$__ = __turbopack_context__.i("[project]/node_modules/next/dist/api/navigation.react-server.js [app-rsc] (ecmascript) <locals>");
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$client$2f$components$2f$navigation$2e$react$2d$server$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/next/dist/client/components/navigation.react-server.js [app-rsc] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$QuizApp$2e$tsx__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/src/components/QuizApp.tsx [app-rsc] (ecmascript)");
-var __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$FlashcardApp$2e$tsx__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/src/components/FlashcardApp.tsx [app-rsc] (ecmascript)"); // <--- Added Component
+var __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$FlashcardApp$2e$tsx__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/src/components/FlashcardApp.tsx [app-rsc] (ecmascript)");
 ;
 ;
 ;
@@ -507,31 +507,6 @@ async function NotePage({ params }) {
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                className: "bg-white p-6 rounded-xl shadow-sm border border-gray-200",
-                children: [
-                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("h2", {
-                        className: "font-semibold mb-2 text-gray-700",
-                        children: "Raw Text Content:"
-                    }, void 0, false, {
-                        fileName: "[project]/src/app/notes/[id]/page.tsx",
-                        lineNumber: 47,
-                        columnNumber: 9
-                    }, this),
-                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                        className: "bg-gray-50 p-4 rounded-lg text-gray-600 text-sm whitespace-pre-wrap font-mono max-h-96 overflow-y-auto",
-                        children: note.content
-                    }, void 0, false, {
-                        fileName: "[project]/src/app/notes/[id]/page.tsx",
-                        lineNumber: 48,
-                        columnNumber: 9
-                    }, this)
-                ]
-            }, void 0, true, {
-                fileName: "[project]/src/app/notes/[id]/page.tsx",
-                lineNumber: 46,
-                columnNumber: 7
-            }, this),
-            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                 className: "pt-4",
                 children: [
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("h2", {
@@ -539,7 +514,7 @@ async function NotePage({ params }) {
                         children: "AI Study Tools 🤖"
                     }, void 0, false, {
                         fileName: "[project]/src/app/notes/[id]/page.tsx",
-                        lineNumber: 55,
+                        lineNumber: 51,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -555,7 +530,7 @@ async function NotePage({ params }) {
                                             children: "📝 Study Guide"
                                         }, void 0, false, {
                                             fileName: "[project]/src/app/notes/[id]/page.tsx",
-                                            lineNumber: 63,
+                                            lineNumber: 58,
                                             columnNumber: 17
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -563,18 +538,18 @@ async function NotePage({ params }) {
                                             children: "Summarize concepts."
                                         }, void 0, false, {
                                             fileName: "[project]/src/app/notes/[id]/page.tsx",
-                                            lineNumber: 64,
+                                            lineNumber: 59,
                                             columnNumber: 17
                                         }, this)
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/src/app/notes/[id]/page.tsx",
-                                    lineNumber: 62,
+                                    lineNumber: 57,
                                     columnNumber: 13
                                 }, this)
                             }, void 0, false, {
                                 fileName: "[project]/src/app/notes/[id]/page.tsx",
-                                lineNumber: 61,
+                                lineNumber: 56,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("form", {
@@ -589,7 +564,7 @@ async function NotePage({ params }) {
                                             children: note.flashcards.length > 0 ? "✅ Flashcards" : "⚡ Flashcards"
                                         }, void 0, false, {
                                             fileName: "[project]/src/app/notes/[id]/page.tsx",
-                                            lineNumber: 77,
+                                            lineNumber: 72,
                                             columnNumber: 17
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -597,18 +572,18 @@ async function NotePage({ params }) {
                                             children: "Memorize terms."
                                         }, void 0, false, {
                                             fileName: "[project]/src/app/notes/[id]/page.tsx",
-                                            lineNumber: 78,
+                                            lineNumber: 73,
                                             columnNumber: 17
                                         }, this)
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/src/app/notes/[id]/page.tsx",
-                                    lineNumber: 70,
+                                    lineNumber: 65,
                                     columnNumber: 13
                                 }, this)
                             }, void 0, false, {
                                 fileName: "[project]/src/app/notes/[id]/page.tsx",
-                                lineNumber: 69,
+                                lineNumber: 64,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("form", {
@@ -623,7 +598,7 @@ async function NotePage({ params }) {
                                             children: note.questions.length > 0 ? "✅ Quiz" : "🧪 Quiz"
                                         }, void 0, false, {
                                             fileName: "[project]/src/app/notes/[id]/page.tsx",
-                                            lineNumber: 91,
+                                            lineNumber: 86,
                                             columnNumber: 15
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -631,37 +606,37 @@ async function NotePage({ params }) {
                                             children: "Practice test."
                                         }, void 0, false, {
                                             fileName: "[project]/src/app/notes/[id]/page.tsx",
-                                            lineNumber: 92,
+                                            lineNumber: 87,
                                             columnNumber: 15
                                         }, this)
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/src/app/notes/[id]/page.tsx",
-                                    lineNumber: 84,
+                                    lineNumber: 79,
                                     columnNumber: 13
                                 }, this)
                             }, void 0, false, {
                                 fileName: "[project]/src/app/notes/[id]/page.tsx",
-                                lineNumber: 83,
+                                lineNumber: 78,
                                 columnNumber: 11
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/app/notes/[id]/page.tsx",
-                        lineNumber: 58,
+                        lineNumber: 53,
                         columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/src/app/notes/[id]/page.tsx",
-                lineNumber: 54,
+                lineNumber: 50,
                 columnNumber: 7
             }, this),
             note.flashcards.length > 0 && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$FlashcardApp$2e$tsx__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["default"], {
                 flashcards: note.flashcards
             }, void 0, false, {
                 fileName: "[project]/src/app/notes/[id]/page.tsx",
-                lineNumber: 103,
+                lineNumber: 98,
                 columnNumber: 9
             }, this),
             note.questions.length > 0 && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -671,12 +646,12 @@ async function NotePage({ params }) {
                     courseId: id
                 }, void 0, false, {
                     fileName: "[project]/src/app/notes/[id]/page.tsx",
-                    lineNumber: 109,
+                    lineNumber: 104,
                     columnNumber: 13
                 }, this)
             }, void 0, false, {
                 fileName: "[project]/src/app/notes/[id]/page.tsx",
-                lineNumber: 108,
+                lineNumber: 103,
                 columnNumber: 9
             }, this),
             note.quizResults.length > 0 && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -687,7 +662,7 @@ async function NotePage({ params }) {
                         children: "📊 Quiz History"
                     }, void 0, false, {
                         fileName: "[project]/src/app/notes/[id]/page.tsx",
-                        lineNumber: 116,
+                        lineNumber: 111,
                         columnNumber: 13
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -708,7 +683,7 @@ async function NotePage({ params }) {
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/src/app/notes/[id]/page.tsx",
-                                                lineNumber: 124,
+                                                lineNumber: 119,
                                                 columnNumber: 33
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -717,13 +692,13 @@ async function NotePage({ params }) {
                                                 children: result.createdAt.toLocaleString()
                                             }, void 0, false, {
                                                 fileName: "[project]/src/app/notes/[id]/page.tsx",
-                                                lineNumber: 125,
+                                                lineNumber: 120,
                                                 columnNumber: 33
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/app/notes/[id]/page.tsx",
-                                        lineNumber: 123,
+                                        lineNumber: 118,
                                         columnNumber: 29
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -738,52 +713,53 @@ async function NotePage({ params }) {
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/app/notes/[id]/page.tsx",
-                                        lineNumber: 127,
+                                        lineNumber: 122,
                                         columnNumber: 29
                                     }, this)
                                 ]
                             }, result.id, true, {
                                 fileName: "[project]/src/app/notes/[id]/page.tsx",
-                                lineNumber: 122,
+                                lineNumber: 117,
                                 columnNumber: 25
                             }, this);
                         })
                     }, void 0, false, {
                         fileName: "[project]/src/app/notes/[id]/page.tsx",
-                        lineNumber: 117,
+                        lineNumber: 112,
                         columnNumber: 13
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/src/app/notes/[id]/page.tsx",
-                lineNumber: 115,
+                lineNumber: 110,
                 columnNumber: 9
             }, this),
             note.summary && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                className: "mt-10 border-t pt-8",
+                className: "mt-10 border-t pt-8 animate-in fade-in slide-in-from-bottom-4 duration-1000",
                 children: [
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("h2", {
                         className: "text-2xl font-bold mb-4 text-indigo-600",
                         children: "🎓 Your Study Guide"
                     }, void 0, false, {
                         fileName: "[project]/src/app/notes/[id]/page.tsx",
-                        lineNumber: 140,
+                        lineNumber: 135,
                         columnNumber: 11
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                        className: "prose prose-lg max-w-none bg-white p-8 rounded-xl shadow-lg border border-indigo-50",
+                        className: "prose prose-lg max-w-none bg-white p-8 rounded-xl shadow-lg border border-indigo-50 prose-headings:text-indigo-800 prose-h1:text-4xl prose-h1:font-extrabold prose-h1:mb-6 prose-h2:text-2xl prose-h2:font-bold prose-h2:mt-8 prose-h2:border-b prose-h2:pb-2 prose-h2:border-indigo-100 prose-p:text-gray-700 prose-p:leading-relaxed prose-li:text-gray-700 prose-li:marker:text-indigo-400 prose-strong:text-indigo-600 prose-strong:font-bold",
+                        // FIX: This .replace() cleans up the ```html that was annoying you
                         dangerouslySetInnerHTML: {
-                            __html: note.summary
+                            __html: note.summary.replace(/```html/g, "").replace(/```/g, "")
                         }
                     }, void 0, false, {
                         fileName: "[project]/src/app/notes/[id]/page.tsx",
-                        lineNumber: 141,
+                        lineNumber: 136,
                         columnNumber: 11
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/src/app/notes/[id]/page.tsx",
-                lineNumber: 139,
+                lineNumber: 134,
                 columnNumber: 9
             }, this)
         ]
