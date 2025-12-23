@@ -1,3 +1,4 @@
-[00:00:20.020] Server  LOG      ✓ Ready in 14.3s
-[00:00:44.741] Server  LOG      ○ Compiling / ...
-[00:03:14.628] Server  LOG      ✓ Compiled in 2.5s
+[00:00:34.361] Server  LOG      ✓ Ready in 22.9s
+[00:00:47.455] Server  LOG      ○ Compiling / ...
+[00:02:02.541] Server  LOG     Warning: Setting up fake worker.
+[00:02:04.588] Server  LOG     Warning: TT: complementing a missing function tail

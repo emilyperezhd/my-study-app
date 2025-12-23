@@ -5,10 +5,25 @@ import { revalidatePath } from "next/cache";
 import { ChatOpenAI } from "@langchain/openai";
 import { PromptTemplate } from "@langchain/core/prompts";
 
+// --- 1. VERCEL POLYFILLS (CRITICAL FOR PDF PARSING) ---
+// This prevents the "DOMMatrix is not defined" error on Vercel
 // @ts-ignore
-import PDFParser from "pdf2json";
+if (!global.DOMMatrix) { global.DOMMatrix = class DOMMatrix { constructor() {} }; }
+// @ts-ignore
+if (!global.ImageData) { global.ImageData = class ImageData { constructor() {} }; }
+// @ts-ignore
+if (!global.Path2D) { global.Path2D = class Path2D { constructor() {} }; }
 
-// --- 1. UPLOAD ACTION (Stable pdf2json) ---
+// --- 2. SMART IMPORT ---
+let pdfParse = require("pdf-parse");
+// Handle Next.js bundling quirks
+if (typeof pdfParse !== 'function' && pdfParse.default) {
+    pdfParse = pdfParse.default;
+}
+
+// -----------------------------------------------------------
+
+// --- 3. UPLOAD ACTION (Using pdf-parse) ---
 export async function uploadPdf(formData: FormData) {
   try {
     const file = formData.get("file") as File;
@@ -17,60 +32,20 @@ export async function uploadPdf(formData: FormData) {
     const arrayBuffer = await file.arrayBuffer();
     const buffer = Buffer.from(arrayBuffer);
 
-    // CRASH-PROOF EXTRACTION LOGIC
-    const text = await new Promise<string>((resolve, reject) => {
-        
-        // FIX: Tell TypeScript to ignore the next line because '1' is correct for this library
-        // @ts-ignore
-        const parser = new PDFParser(null, 1); 
-
-        parser.on("pdfParser_dataError", (errData: any) => {
-            console.error("PDF Parser Error:", errData.parserError);
-            resolve(""); 
-        });
-
-        parser.on("pdfParser_dataReady", (pdfData: any) => {
-            try {
-                if (!pdfData || !pdfData.formImage || !pdfData.formImage.Pages) {
-                    resolve("");
-                    return;
-                }
-                let extractedText = "";
-                // @ts-ignore
-                pdfData.formImage.Pages.forEach((page) => {
-                     // @ts-ignore
-                    if (page.Texts) {
-                         // @ts-ignore
-                        page.Texts.forEach((textItem) => {
-                             // @ts-ignore
-                            if (textItem.R) {
-                                // @ts-ignore
-                                textItem.R.forEach((run) => {
-                                    if (run.T) extractedText += decodeURIComponent(run.T) + " ";
-                                });
-                            }
-                        });
-                    }
-                    extractedText += "\n";
-                });
-                resolve(extractedText);
-            } catch (error) {
-                console.error("Manual extraction failed:", error);
-                resolve(""); 
-            }
-        });
-
-        try {
-            parser.parseBuffer(buffer);
-        } catch (e) {
-            console.error("Buffer error:", e);
-            resolve("");
+    // Extract Text using pdf-parse (Promise-based, reliable on Vercel)
+    let finalContent = "";
+    
+    try {
+        const data = await pdfParse(buffer);
+        if (data && data.text && data.text.trim().length > 0) {
+            finalContent = data.text;
+        } else {
+            finalContent = "⚠️ Text extraction failed. This PDF might be an image scan.";
         }
-    });
-
-    const finalContent = typeof text === 'string' && text.trim().length > 0 
-        ? text 
-        : "⚠️ Text could not be extracted. This PDF might be an image scan.";
+    } catch (error) {
+        console.error("PDF Parsing Error:", error);
+        finalContent = "⚠️ Error reading PDF file.";
+    }
 
     await db.course.create({
       data: {
@@ -85,13 +60,11 @@ export async function uploadPdf(formData: FormData) {
   }
 }
 
-// --- 2. MANAGEMENT ACTIONS (Delete/Rename) ---
+// --- 4. MANAGEMENT ACTIONS ---
 
 export async function deleteCourse(id: string) {
   try {
-    await db.course.delete({
-      where: { id: id }
-    });
+    await db.course.delete({ where: { id: id } });
     revalidatePath("/");
   } catch (error) {
     console.error("Delete Error:", error);
@@ -100,17 +73,14 @@ export async function deleteCourse(id: string) {
 
 export async function renameCourse(id: string, newTitle: string) {
   try {
-    await db.course.update({
-      where: { id: id },
-      data: { title: newTitle }
-    });
+    await db.course.update({ where: { id: id }, data: { title: newTitle } });
     revalidatePath("/");
   } catch (error) {
     console.error("Rename Error:", error);
   }
 }
 
-// --- 3. GENERATORS ---
+// --- 5. GENERATORS ---
 
 export async function generateStudyGuide(id: string) {
   try {
@@ -162,7 +132,6 @@ export async function generateQuiz(id: string) {
 
     const chain = prompt.pipe(model);
     const response = await chain.invoke({ text: note.content.slice(0, 25000) });
-    
     const content = typeof response.content === 'string' ? response.content : JSON.stringify(response.content);
     const data = JSON.parse(content);
     
@@ -202,7 +171,6 @@ export async function generateFlashcards(id: string) {
 
     const chain = prompt.pipe(model);
     const response = await chain.invoke({ text: note.content.slice(0, 25000) });
-    
     const content = typeof response.content === 'string' ? response.content : JSON.stringify(response.content);
     const data = JSON.parse(content);
     
@@ -242,7 +210,6 @@ export async function generatePracticeExam(id: string) {
 
     const chain = prompt.pipe(model);
     const response = await chain.invoke({ text: note.content.slice(0, 30000) });
-    
     const content = typeof response.content === 'string' ? response.content : JSON.stringify(response.content);
     const data = JSON.parse(content);
     
@@ -296,15 +263,15 @@ export async function generateCrossword(id: string) {
     const content = typeof response.content === 'string' ? response.content : JSON.stringify(response.content);
     const data = JSON.parse(content);
     
+    // Grid Building Logic
     const terms = data.terms;
-
-    // Build the Grid Manually
     const gridSize = 12; 
     let grid = Array(gridSize).fill(null).map(() => Array(gridSize).fill(""));
     let placedWords = [] as any[];
 
     terms.sort((a: any, b: any) => b.word.length - a.word.length);
 
+    // Place first word
     const firstWord = terms[0];
     if (firstWord) {
         const startCol = Math.floor((gridSize - firstWord.word.length) / 2);
@@ -315,6 +282,7 @@ export async function generateCrossword(id: string) {
         placedWords.push({ ...firstWord, row: startRow, col: startCol, dir: 'across' });
     }
 
+    // Place remaining words
     for (let i = 1; i < terms.length; i++) {
         const currentTerm = terms[i];
         const word = currentTerm.word;
@@ -402,9 +370,7 @@ export async function generateCrossword(id: string) {
 
 export async function saveQuizResult(courseId: string, score: number, total: number) {
   try {
-    await db.quizResult.create({
-      data: { courseId, score, total },
-    });
+    await db.quizResult.create({ data: { courseId, score, total } });
     revalidatePath(`/notes/${courseId}`);
   } catch (error) {
     console.error("Save Error:", error);
@@ -413,9 +379,7 @@ export async function saveQuizResult(courseId: string, score: number, total: num
 
 export async function saveExamResult(courseId: string, score: number, total: number) {
   try {
-    await db.examResult.create({
-      data: { courseId, score, total },
-    });
+    await db.examResult.create({ data: { courseId, score, total } });
     revalidatePath(`/notes/${courseId}`);
   } catch (error) {
     console.error("Exam Save Error:", error);
