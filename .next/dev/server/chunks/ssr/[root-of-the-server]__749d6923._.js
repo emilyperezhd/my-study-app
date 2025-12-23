@@ -114,7 +114,10 @@ async function uploadPdf(formData) {
         if (!file) throw new Error("No file found");
         const arrayBuffer = await file.arrayBuffer();
         const buffer = Buffer.from(arrayBuffer);
+        // CRASH-PROOF EXTRACTION LOGIC
         const text = await new Promise((resolve, reject)=>{
+            // FIX: Tell TypeScript to ignore the next line because '1' is correct for this library
+            // @ts-ignore
             const parser = new __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$pdf2json$2f$dist$2f$pdfparser$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["default"](null, 1);
             parser.on("pdfParser_dataError", (errData)=>{
                 console.error("PDF Parser Error:", errData.parserError);
@@ -157,7 +160,7 @@ async function uploadPdf(formData) {
                 resolve("");
             }
         });
-        const finalContent = typeof text === 'string' && text.trim().length > 0 ? text : "⚠️ Text could not be extracted.";
+        const finalContent = typeof text === 'string' && text.trim().length > 0 ? text : "⚠️ Text could not be extracted. This PDF might be an image scan.";
         await __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$db$2e$ts__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["db"].course.create({
             data: {
                 title: file.name,
@@ -369,7 +372,6 @@ async function generateCrossword(id) {
                 }
             }
         });
-        // 1. Get just the words and clues
         const prompt = __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$langchain$2f$core$2f$dist$2f$prompts$2f$prompt$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["PromptTemplate"].fromTemplate(`Extract 20 glossary terms from the text for a crossword puzzle.
        Rules:
        - Single word answers only (no spaces/hyphens).
@@ -391,13 +393,11 @@ async function generateCrossword(id) {
         const content = typeof response.content === 'string' ? response.content : JSON.stringify(response.content);
         const data = JSON.parse(content);
         const terms = data.terms;
-        // 2. Build the Grid Manually (Simple Layout Algorithm)
-        const gridSize = 12; // Slightly larger to fit more words
+        // Build the Grid Manually
+        const gridSize = 12;
         let grid = Array(gridSize).fill(null).map(()=>Array(gridSize).fill(""));
         let placedWords = [];
-        // Sort by length (longest first)
         terms.sort((a, b)=>b.word.length - a.word.length);
-        // Place first word in center
         const firstWord = terms[0];
         if (firstWord) {
             const startCol = Math.floor((gridSize - firstWord.word.length) / 2);
@@ -412,55 +412,39 @@ async function generateCrossword(id) {
                 dir: 'across'
             });
         }
-        // Try to place other words
         for(let i = 1; i < terms.length; i++){
             const currentTerm = terms[i];
             const word = currentTerm.word;
             let placed = false;
-            // Try to find an intersection
             for (const placedWord of placedWords){
                 if (placed) break;
-                // Check every letter overlap
                 for(let j = 0; j < word.length; j++){
                     if (placed) break;
                     for(let k = 0; k < placedWord.word.length; k++){
                         if (word[j] === placedWord.word[k]) {
-                            // Found a common letter!
-                            // If placed word is Across, we try Down. If Down, we try Across.
                             const newDir = placedWord.dir === 'across' ? 'down' : 'across';
-                            // Calculate potential start pos
                             let newRow = placedWord.row;
                             let newCol = placedWord.col;
                             if (placedWord.dir === 'across') {
-                                // Placed is horizontal at (row, col). Common char is at (row, col+k)
-                                // New word is Vertical. Common char is at index j.
-                                // So new word starts at (row - j, col + k)
                                 newRow = placedWord.row - j;
                                 newCol = placedWord.col + k;
                             } else {
-                                // Placed is vertical at (row, col). Common char is at (row+k, col)
-                                // New word is Horizontal. Common char is at index j.
-                                // So new word starts at (row + k, col - j)
                                 newRow = placedWord.row + k;
                                 newCol = placedWord.col - j;
                             }
-                            // Validate Bounds
                             if (newRow < 0 || newCol < 0 || newDir === 'across' && newCol + word.length > gridSize || newDir === 'down' && newRow + word.length > gridSize) {
                                 continue;
                             }
-                            // Validate Collisions
                             let collision = false;
                             for(let c = 0; c < word.length; c++){
                                 const r = newDir === 'across' ? newRow : newRow + c;
                                 const col = newDir === 'across' ? newCol + c : newCol;
-                                // Cell must be empty OR match exactly
                                 if (grid[r][col] !== "" && grid[r][col] !== word[c]) {
                                     collision = true;
                                     break;
                                 }
                             }
                             if (!collision) {
-                                // Place it!
                                 for(let c = 0; c < word.length; c++){
                                     const r = newDir === 'across' ? newRow : newRow + c;
                                     const col = newDir === 'across' ? newCol + c : newCol;
@@ -479,17 +463,14 @@ async function generateCrossword(id) {
                 }
             }
         }
-        // 3. Generate Final Output Structure
         const numbers = Array(gridSize).fill(null).map(()=>Array(gridSize).fill(0));
         const clues = {
             across: [],
             down: []
         };
         let clueNum = 1;
-        // Sort placed words by position to number them correctly (reading order)
         placedWords.sort((a, b)=>a.row - b.row || a.col - b.col);
         placedWords.forEach((pw)=>{
-            // Assign number if not exists
             let num = numbers[pw.row][pw.col];
             if (num === 0) {
                 num = clueNum++;
