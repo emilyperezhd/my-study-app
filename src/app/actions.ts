@@ -5,28 +5,7 @@ import { revalidatePath } from "next/cache";
 import { ChatOpenAI } from "@langchain/openai";
 import { PromptTemplate } from "@langchain/core/prompts";
 
-// --- 1. VERCEL POLYFILLS (CRITICAL FOR PDF PARSING) ---
-// This tricks pdf-parse into thinking it's in a browser environment
-// @ts-ignore
-if (typeof Promise.withResolvers === "undefined") {
-  // @ts-ignore
-  if (!global.DOMMatrix) { global.DOMMatrix = class DOMMatrix { constructor() {} }; }
-  // @ts-ignore
-  if (!global.ImageData) { global.ImageData = class ImageData { constructor() {} }; }
-  // @ts-ignore
-  if (!global.Path2D) { global.Path2D = class Path2D { constructor() {} }; }
-}
-
-// --- 2. SMART IMPORT FOR pdf-parse ---
-let pdfParse = require("pdf-parse");
-// Handle Next.js module wrapping quirks
-if (typeof pdfParse !== 'function' && pdfParse.default) {
-    pdfParse = pdfParse.default;
-}
-// -----------------------------------------------------------
-
-
-// --- 3. UPLOAD ACTION (Using pdf-parse with polyfills) ---
+// --- 1. UPLOAD ACTION (Stable pdf2json with Lazy Loading) ---
 export async function uploadPdf(formData: FormData) {
   try {
     const file = formData.get("file") as File;
@@ -35,20 +14,65 @@ export async function uploadPdf(formData: FormData) {
     const arrayBuffer = await file.arrayBuffer();
     const buffer = Buffer.from(arrayBuffer);
 
-    let finalContent = "No text found.";
-    
-    try {
-        // Use pdf-parse, now with the necessary browser polyfills
-        const data = await pdfParse(buffer);
-        if (data && data.text && data.text.trim().length > 0) {
-            finalContent = data.text;
-        } else {
-            finalContent = "⚠️ This PDF appears to be empty or scanned (image-only). Text could not be extracted.";
+    // FIX: Lazy load the library so it doesn't crash the build
+    const PDFParser = require("pdf2json");
+
+    const text = await new Promise<string>((resolve, reject) => {
+        const parser = new PDFParser(null, 1); // 1 = Raw Text Mode
+
+        parser.on("pdfParser_dataError", (errData: any) => {
+            console.error("PDF Parser Error:", errData.parserError);
+            resolve(""); 
+        });
+
+        parser.on("pdfParser_dataReady", (pdfData: any) => {
+            try {
+                // Safety Check
+                if (!pdfData || !pdfData.formImage || !pdfData.formImage.Pages) {
+                    resolve("");
+                    return;
+                }
+
+                let extractedText = "";
+                
+                // Manual Loop to extract text safely
+                // @ts-ignore
+                pdfData.formImage.Pages.forEach((page) => {
+                     // @ts-ignore
+                    if (page.Texts) {
+                         // @ts-ignore
+                        page.Texts.forEach((textItem) => {
+                             // @ts-ignore
+                            if (textItem.R) {
+                                // @ts-ignore
+                                textItem.R.forEach((run) => {
+                                    // Decode URI text
+                                    if (run.T) extractedText += decodeURIComponent(run.T) + " ";
+                                });
+                            }
+                        });
+                    }
+                    extractedText += "\n";
+                });
+                
+                resolve(extractedText);
+            } catch (error) {
+                console.error("Manual extraction failed:", error);
+                resolve(""); 
+            }
+        });
+
+        try {
+            parser.parseBuffer(buffer);
+        } catch (e) {
+            console.error("Buffer error:", e);
+            resolve("");
         }
-    } catch (parseError) {
-        console.error("PDF Parsing Error:", parseError);
-        finalContent = "⚠️ Error reading PDF file. It might be corrupted or encrypted.";
-    }
+    });
+
+    const finalContent = typeof text === 'string' && text.trim().length > 0 
+        ? text 
+        : "⚠️ Text could not be extracted. This might be a scanned image.";
 
     await db.course.create({
       data: {
@@ -63,7 +87,7 @@ export async function uploadPdf(formData: FormData) {
   }
 }
 
-// --- 4. MANAGEMENT ACTIONS (Delete/Rename) ---
+// --- 2. MANAGEMENT ACTIONS ---
 
 export async function deleteCourse(id: string) {
   try {
@@ -83,7 +107,7 @@ export async function renameCourse(id: string, newTitle: string) {
   }
 }
 
-// --- 5. GENERATORS ---
+// --- 3. GENERATORS ---
 
 export async function generateStudyGuide(id: string) {
   try {
@@ -266,8 +290,9 @@ export async function generateCrossword(id: string) {
     const content = typeof response.content === 'string' ? response.content : JSON.stringify(response.content);
     const data = JSON.parse(content);
     
-    // Grid Building Logic
     const terms = data.terms;
+
+    // Grid Building Logic
     const gridSize = 12; 
     let grid = Array(gridSize).fill(null).map(() => Array(gridSize).fill(""));
     let placedWords = [] as any[];
