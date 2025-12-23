@@ -5,7 +5,7 @@ import { revalidatePath } from "next/cache";
 import { ChatOpenAI } from "@langchain/openai";
 import { PromptTemplate } from "@langchain/core/prompts";
 
-// --- 1. UPLOAD ACTION (Stable pdf2json with Lazy Loading) ---
+// --- 1. UPLOAD ACTION (Lazy Loaded pdf-parse) ---
 export async function uploadPdf(formData: FormData) {
   try {
     const file = formData.get("file") as File;
@@ -14,65 +14,36 @@ export async function uploadPdf(formData: FormData) {
     const arrayBuffer = await file.arrayBuffer();
     const buffer = Buffer.from(arrayBuffer);
 
-    // FIX: Lazy load the library so it doesn't crash the build
-    const PDFParser = require("pdf2json");
+    // --- VERCEL FIX START ---
+    // 1. Mock Browser Environment (Prevents "DOMMatrix is not defined" crash)
+    // @ts-ignore
+    if (!global.DOMMatrix) { global.DOMMatrix = class DOMMatrix { constructor() {} }; }
+    // @ts-ignore
+    if (!global.ImageData) { global.ImageData = class ImageData { constructor() {} }; }
+    // @ts-ignore
+    if (!global.Path2D) { global.Path2D = class Path2D { constructor() {} }; }
 
-    const text = await new Promise<string>((resolve, reject) => {
-        const parser = new PDFParser(null, 1); // 1 = Raw Text Mode
+    // 2. Lazy Load Library (Prevents Build-Time Crash)
+    let pdfParse = require("pdf-parse");
+    // Handle Next.js bundling quirks
+    if (typeof pdfParse !== 'function' && pdfParse.default) {
+        pdfParse = pdfParse.default;
+    }
+    // --- VERCEL FIX END ---
 
-        parser.on("pdfParser_dataError", (errData: any) => {
-            console.error("PDF Parser Error:", errData.parserError);
-            resolve(""); 
-        });
-
-        parser.on("pdfParser_dataReady", (pdfData: any) => {
-            try {
-                // Safety Check
-                if (!pdfData || !pdfData.formImage || !pdfData.formImage.Pages) {
-                    resolve("");
-                    return;
-                }
-
-                let extractedText = "";
-                
-                // Manual Loop to extract text safely
-                // @ts-ignore
-                pdfData.formImage.Pages.forEach((page) => {
-                     // @ts-ignore
-                    if (page.Texts) {
-                         // @ts-ignore
-                        page.Texts.forEach((textItem) => {
-                             // @ts-ignore
-                            if (textItem.R) {
-                                // @ts-ignore
-                                textItem.R.forEach((run) => {
-                                    // Decode URI text
-                                    if (run.T) extractedText += decodeURIComponent(run.T) + " ";
-                                });
-                            }
-                        });
-                    }
-                    extractedText += "\n";
-                });
-                
-                resolve(extractedText);
-            } catch (error) {
-                console.error("Manual extraction failed:", error);
-                resolve(""); 
-            }
-        });
-
-        try {
-            parser.parseBuffer(buffer);
-        } catch (e) {
-            console.error("Buffer error:", e);
-            resolve("");
+    let finalContent = "";
+    
+    try {
+        const data = await pdfParse(buffer);
+        if (data && data.text && data.text.trim().length > 0) {
+            finalContent = data.text;
+        } else {
+            finalContent = "⚠️ Text extracted but empty. This might be an image scan.";
         }
-    });
-
-    const finalContent = typeof text === 'string' && text.trim().length > 0 
-        ? text 
-        : "⚠️ Text could not be extracted. This might be a scanned image.";
+    } catch (parseError) {
+        console.error("PDF Parse Error:", parseError);
+        finalContent = "⚠️ Error parsing PDF. File might be corrupted.";
+    }
 
     await db.course.create({
       data: {
