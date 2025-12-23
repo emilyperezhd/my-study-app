@@ -18,7 +18,7 @@
     "langchain": "^1.2.1",
     "lucide-react": "^0.561.0",
     "next": "16.0.10",
-    "pdf2json": "^4.0.0",
+    "pdf-parse": "^2.4.5",
     "prisma": "^5.10.2",
     "react": "19.2.1",
     "react-dom": "19.2.1",

@@ -5,7 +5,28 @@ import { revalidatePath } from "next/cache";
 import { ChatOpenAI } from "@langchain/openai";
 import { PromptTemplate } from "@langchain/core/prompts";
 
-// --- 1. UPLOAD ACTION (Robust pdf2json) ---
+// --- 1. VERCEL POLYFILLS (CRITICAL FOR PDF PARSING) ---
+// This tricks pdf-parse into thinking it's in a browser environment
+// @ts-ignore
+if (typeof Promise.withResolvers === "undefined") {
+  // @ts-ignore
+  if (!global.DOMMatrix) { global.DOMMatrix = class DOMMatrix { constructor() {} }; }
+  // @ts-ignore
+  if (!global.ImageData) { global.ImageData = class ImageData { constructor() {} }; }
+  // @ts-ignore
+  if (!global.Path2D) { global.Path2D = class Path2D { constructor() {} }; }
+}
+
+// --- 2. SMART IMPORT FOR pdf-parse ---
+let pdfParse = require("pdf-parse");
+// Handle Next.js module wrapping quirks
+if (typeof pdfParse !== 'function' && pdfParse.default) {
+    pdfParse = pdfParse.default;
+}
+// -----------------------------------------------------------
+
+
+// --- 3. UPLOAD ACTION (Using pdf-parse with polyfills) ---
 export async function uploadPdf(formData: FormData) {
   try {
     const file = formData.get("file") as File;
@@ -14,66 +35,20 @@ export async function uploadPdf(formData: FormData) {
     const arrayBuffer = await file.arrayBuffer();
     const buffer = Buffer.from(arrayBuffer);
 
-    // Dynamic import to prevent build-time issues on Vercel
-    const PDFParser = require("pdf2json");
-
-    const text = await new Promise<string>((resolve, reject) => {
-        const parser = new PDFParser(null, 1); // 1 = Raw Text Mode
-
-        parser.on("pdfParser_dataError", (errData: any) => {
-            console.error("PDF Parser Error:", errData.parserError);
-            resolve(""); // Resolve empty instead of crashing
-        });
-
-        parser.on("pdfParser_dataReady", (pdfData: any) => {
-            try {
-                // Safety Check
-                if (!pdfData || !pdfData.formImage || !pdfData.formImage.Pages) {
-                    resolve("");
-                    return;
-                }
-
-                let extractedText = "";
-                
-                // MANUAL EXTRACTION LOOP (Prevents "Infinity" crash)
-                // @ts-ignore
-                pdfData.formImage.Pages.forEach((page) => {
-                     // @ts-ignore
-                    if (page.Texts) {
-                         // @ts-ignore
-                        page.Texts.forEach((textItem) => {
-                             // @ts-ignore
-                            if (textItem.R) {
-                                // @ts-ignore
-                                textItem.R.forEach((run) => {
-                                    // Decode text (it comes as URI encoded)
-                                    if (run.T) extractedText += decodeURIComponent(run.T) + " ";
-                                });
-                            }
-                        });
-                    }
-                    extractedText += "\n";
-                });
-                
-                resolve(extractedText);
-            } catch (error) {
-                console.error("Manual extraction failed:", error);
-                resolve(""); 
-            }
-        });
-
-        try {
-            parser.parseBuffer(buffer);
-        } catch (e) {
-            console.error("Buffer error:", e);
-            resolve("");
+    let finalContent = "No text found.";
+    
+    try {
+        // Use pdf-parse, now with the necessary browser polyfills
+        const data = await pdfParse(buffer);
+        if (data && data.text && data.text.trim().length > 0) {
+            finalContent = data.text;
+        } else {
+            finalContent = "⚠️ This PDF appears to be empty or scanned (image-only). Text could not be extracted.";
         }
-    });
-
-    // Fallback if text is empty
-    const finalContent = typeof text === 'string' && text.trim().length > 0 
-        ? text 
-        : "⚠️ Text could not be extracted. This might be a scanned image.";
+    } catch (parseError) {
+        console.error("PDF Parsing Error:", parseError);
+        finalContent = "⚠️ Error reading PDF file. It might be corrupted or encrypted.";
+    }
 
     await db.course.create({
       data: {
@@ -88,7 +63,7 @@ export async function uploadPdf(formData: FormData) {
   }
 }
 
-// --- 2. MANAGEMENT ACTIONS ---
+// --- 4. MANAGEMENT ACTIONS (Delete/Rename) ---
 
 export async function deleteCourse(id: string) {
   try {
@@ -108,7 +83,7 @@ export async function renameCourse(id: string, newTitle: string) {
   }
 }
 
-// --- 3. GENERATORS ---
+// --- 5. GENERATORS ---
 
 export async function generateStudyGuide(id: string) {
   try {
@@ -291,7 +266,7 @@ export async function generateCrossword(id: string) {
     const content = typeof response.content === 'string' ? response.content : JSON.stringify(response.content);
     const data = JSON.parse(content);
     
-    // Grid Logic
+    // Grid Building Logic
     const terms = data.terms;
     const gridSize = 12; 
     let grid = Array(gridSize).fill(null).map(() => Array(gridSize).fill(""));
