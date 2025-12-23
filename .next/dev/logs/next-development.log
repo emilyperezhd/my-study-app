@@ -1,3 +1,3 @@
-[00:00:21.280] Server  LOG      ✓ Ready in 15.4s
-[00:00:32.563] Server  LOG      ○ Compiling / ...
-[00:24:01.055] Server  LOG        Reload env: .env
+[00:00:20.020] Server  LOG      ✓ Ready in 14.3s
+[00:00:44.741] Server  LOG      ○ Compiling / ...
+[00:03:14.628] Server  LOG      ✓ Compiled in 2.5s

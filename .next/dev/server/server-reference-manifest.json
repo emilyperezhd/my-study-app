@@ -1,66 +1,6 @@
 {
   "node": {
-    "4029b1f2a07c9a7d620d4b958168233797a4861b20": {
-      "workers": {
-        "app/page": {
-          "moduleId": "[project]/.next-internal/server/app/page/actions.js { ACTIONS_MODULE0 => \"[project]/src/app/actions.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
-          "async": false,
-          "exportedName": "uploadPdf",
-          "filename": "src/app/actions.ts"
-        }
-      },
-      "layer": {
-        "app/page": "rsc"
-      },
-      "filename": "src/app/actions.ts",
-      "exportedName": "uploadPdf"
-    },
-    "405f0c08a6259be969c69361ec5853ab9d7ccfe00c": {
-      "workers": {
-        "app/page": {
-          "moduleId": "[project]/.next-internal/server/app/page/actions.js { ACTIONS_MODULE0 => \"[project]/src/app/actions.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
-          "async": false,
-          "exportedName": "generateCrossword",
-          "filename": "src/app/actions.ts"
-        }
-      },
-      "layer": {
-        "app/page": "rsc"
-      },
-      "filename": "src/app/actions.ts",
-      "exportedName": "generateCrossword"
-    },
-    "409078de68a41a43e66f0601878397a73538990768": {
-      "workers": {
-        "app/page": {
-          "moduleId": "[project]/.next-internal/server/app/page/actions.js { ACTIONS_MODULE0 => \"[project]/src/app/actions.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
-          "async": false,
-          "exportedName": "generateStudyGuide",
-          "filename": "src/app/actions.ts"
-        }
-      },
-      "layer": {
-        "app/page": "rsc"
-      },
-      "filename": "src/app/actions.ts",
-      "exportedName": "generateStudyGuide"
-    },
-    "409b10a8f76ebde8a9c653283fd0b8db06b04e0359": {
-      "workers": {
-        "app/page": {
-          "moduleId": "[project]/.next-internal/server/app/page/actions.js { ACTIONS_MODULE0 => \"[project]/src/app/actions.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
-          "async": false,
-          "exportedName": "deleteCourse",
-          "filename": "src/app/actions.ts"
-        }
-      },
-      "layer": {
-        "app/page": "action-browser"
-      },
-      "filename": "src/app/actions.ts",
-      "exportedName": "deleteCourse"
-    },
-    "40b1056ec51f8d9f6ad6b2a3e1b600180be311da8d": {
+    "402dda27e53330839df612584668f3f31324860f81": {
       "workers": {
         "app/page": {
           "moduleId": "[project]/.next-internal/server/app/page/actions.js { ACTIONS_MODULE0 => \"[project]/src/app/actions.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
@@ -75,22 +15,22 @@
       "filename": "src/app/actions.ts",
       "exportedName": "generateFlashcards"
     },
-    "40f43fc974ff6928b7b3a2e6912cea9dbb69f4517b": {
+    "404f6a5ed45282d9dc6f388eabb5943915c7bdb32d": {
       "workers": {
         "app/page": {
           "moduleId": "[project]/.next-internal/server/app/page/actions.js { ACTIONS_MODULE0 => \"[project]/src/app/actions.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
           "async": false,
-          "exportedName": "generateQuiz",
+          "exportedName": "deleteCourse",
           "filename": "src/app/actions.ts"
         }
       },
       "layer": {
-        "app/page": "rsc"
+        "app/page": "action-browser"
       },
       "filename": "src/app/actions.ts",
-      "exportedName": "generateQuiz"
+      "exportedName": "deleteCourse"
     },
-    "40fb690e8484cf7700be5874e06ca30bec5ad4966b": {
+    "4055c70924c41a6c5cb03e57498454f3efcb30798a": {
       "workers": {
         "app/page": {
           "moduleId": "[project]/.next-internal/server/app/page/actions.js { ACTIONS_MODULE0 => \"[project]/src/app/actions.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
@@ -105,7 +45,67 @@
       "filename": "src/app/actions.ts",
       "exportedName": "generatePracticeExam"
     },
-    "604d9ab2e8562919b8dafb514e563e8e65bc7d7f81": {
+    "4066a91c719d8d1c60f537b9ab4e97e689e6c642fa": {
+      "workers": {
+        "app/page": {
+          "moduleId": "[project]/.next-internal/server/app/page/actions.js { ACTIONS_MODULE0 => \"[project]/src/app/actions.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+          "async": false,
+          "exportedName": "generateQuiz",
+          "filename": "src/app/actions.ts"
+        }
+      },
+      "layer": {
+        "app/page": "rsc"
+      },
+      "filename": "src/app/actions.ts",
+      "exportedName": "generateQuiz"
+    },
+    "4084aa933b6d2a0b505a6e37818176cac5a3c3bf16": {
+      "workers": {
+        "app/page": {
+          "moduleId": "[project]/.next-internal/server/app/page/actions.js { ACTIONS_MODULE0 => \"[project]/src/app/actions.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+          "async": false,
+          "exportedName": "uploadPdf",
+          "filename": "src/app/actions.ts"
+        }
+      },
+      "layer": {
+        "app/page": "rsc"
+      },
+      "filename": "src/app/actions.ts",
+      "exportedName": "uploadPdf"
+    },
+    "40bdab507ac98151effef3123b27b706eb86239f8a": {
+      "workers": {
+        "app/page": {
+          "moduleId": "[project]/.next-internal/server/app/page/actions.js { ACTIONS_MODULE0 => \"[project]/src/app/actions.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+          "async": false,
+          "exportedName": "generateCrossword",
+          "filename": "src/app/actions.ts"
+        }
+      },
+      "layer": {
+        "app/page": "rsc"
+      },
+      "filename": "src/app/actions.ts",
+      "exportedName": "generateCrossword"
+    },
+    "40e7f30e73dcdbdbb44397332eb4f8c6cd0a668f4d": {
+      "workers": {
+        "app/page": {
+          "moduleId": "[project]/.next-internal/server/app/page/actions.js { ACTIONS_MODULE0 => \"[project]/src/app/actions.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+          "async": false,
+          "exportedName": "generateStudyGuide",
+          "filename": "src/app/actions.ts"
+        }
+      },
+      "layer": {
+        "app/page": "rsc"
+      },
+      "filename": "src/app/actions.ts",
+      "exportedName": "generateStudyGuide"
+    },
+    "60b6d560014f392c11a35ec897bc5fca409e22a5e3": {
       "workers": {
         "app/page": {
           "moduleId": "[project]/.next-internal/server/app/page/actions.js { ACTIONS_MODULE0 => \"[project]/src/app/actions.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
@@ -120,7 +120,7 @@
       "filename": "src/app/actions.ts",
       "exportedName": "renameCourse"
     },
-    "707237374e2ca69a57c875b3ea679e9f2e612c7182": {
+    "707cfbd001cbb034b7ceee4ca8f26a8b6e0499556d": {
       "workers": {
         "app/page": {
           "moduleId": "[project]/.next-internal/server/app/page/actions.js { ACTIONS_MODULE0 => \"[project]/src/app/actions.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
@@ -135,7 +135,7 @@
       "filename": "src/app/actions.ts",
       "exportedName": "saveQuizResult"
     },
-    "70aae445aa96797072f5882989150971aec1840174": {
+    "70de0ef2d52609a16e74afdd2b2111412777bc12e3": {
       "workers": {
         "app/page": {
           "moduleId": "[project]/.next-internal/server/app/page/actions.js { ACTIONS_MODULE0 => \"[project]/src/app/actions.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
@@ -152,5 +152,5 @@
     }
   },
   "edge": {},
-  "encryptionKey": "pwzM4dfeERO5LkAcFRhxvhLfkZSoiEUiXLCEe1SbNnk="
+  "encryptionKey": "8jfcn4ToFvlp5m0TdMxH8W9cExnFrbncl1STWp1VlOY="
 }
