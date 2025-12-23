@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import { db } from "../lib/db";
 import { uploadPdf } from "./actions";
 import CourseCard from "../components/CourseCard";

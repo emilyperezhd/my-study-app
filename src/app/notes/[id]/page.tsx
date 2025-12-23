@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic"; 
+
 import { db } from "../../../lib/db";
 import { generateStudyGuide, generateQuiz, generateFlashcards, generatePracticeExam, generateCrossword } from "../../actions";
 import Link from "next/link";
