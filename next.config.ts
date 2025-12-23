@@ -1,6 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // 1. Ignore TypeScript Errors during build
+  // 1. Ignore TypeScript Errors during build (Keep this to prevent build fails)
   typescript: {
     ignoreBuildErrors: true,
   },
@@ -8,8 +8,15 @@ const nextConfig = {
   eslint: {
     ignoreDuringBuilds: true,
   },
-  // 3. Increase timeout for static generation (just in case)
+  // 3. Increase timeout for static generation
   staticPageGenerationTimeout: 120,
+
+  // 4. FIX: Increase Upload Limit to 10MB
+  experimental: {
+    serverActions: {
+      bodySizeLimit: '10mb',
+    },
+  },
 };
 
 export default nextConfig;
