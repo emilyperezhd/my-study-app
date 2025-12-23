@@ -5,25 +5,7 @@ import { revalidatePath } from "next/cache";
 import { ChatOpenAI } from "@langchain/openai";
 import { PromptTemplate } from "@langchain/core/prompts";
 
-// --- 1. VERCEL POLYFILLS (CRITICAL FOR PDF PARSING) ---
-// This prevents the "DOMMatrix is not defined" error on Vercel
-// @ts-ignore
-if (!global.DOMMatrix) { global.DOMMatrix = class DOMMatrix { constructor() {} }; }
-// @ts-ignore
-if (!global.ImageData) { global.ImageData = class ImageData { constructor() {} }; }
-// @ts-ignore
-if (!global.Path2D) { global.Path2D = class Path2D { constructor() {} }; }
-
-// --- 2. SMART IMPORT ---
-let pdfParse = require("pdf-parse");
-// Handle Next.js bundling quirks
-if (typeof pdfParse !== 'function' && pdfParse.default) {
-    pdfParse = pdfParse.default;
-}
-
-// -----------------------------------------------------------
-
-// --- 3. UPLOAD ACTION (Using pdf-parse) ---
+// --- 1. UPLOAD ACTION (Robust pdf2json) ---
 export async function uploadPdf(formData: FormData) {
   try {
     const file = formData.get("file") as File;
@@ -32,20 +14,66 @@ export async function uploadPdf(formData: FormData) {
     const arrayBuffer = await file.arrayBuffer();
     const buffer = Buffer.from(arrayBuffer);
 
-    // Extract Text using pdf-parse (Promise-based, reliable on Vercel)
-    let finalContent = "";
-    
-    try {
-        const data = await pdfParse(buffer);
-        if (data && data.text && data.text.trim().length > 0) {
-            finalContent = data.text;
-        } else {
-            finalContent = "⚠️ Text extraction failed. This PDF might be an image scan.";
+    // Dynamic import to prevent build-time issues on Vercel
+    const PDFParser = require("pdf2json");
+
+    const text = await new Promise<string>((resolve, reject) => {
+        const parser = new PDFParser(null, 1); // 1 = Raw Text Mode
+
+        parser.on("pdfParser_dataError", (errData: any) => {
+            console.error("PDF Parser Error:", errData.parserError);
+            resolve(""); // Resolve empty instead of crashing
+        });
+
+        parser.on("pdfParser_dataReady", (pdfData: any) => {
+            try {
+                // Safety Check
+                if (!pdfData || !pdfData.formImage || !pdfData.formImage.Pages) {
+                    resolve("");
+                    return;
+                }
+
+                let extractedText = "";
+                
+                // MANUAL EXTRACTION LOOP (Prevents "Infinity" crash)
+                // @ts-ignore
+                pdfData.formImage.Pages.forEach((page) => {
+                     // @ts-ignore
+                    if (page.Texts) {
+                         // @ts-ignore
+                        page.Texts.forEach((textItem) => {
+                             // @ts-ignore
+                            if (textItem.R) {
+                                // @ts-ignore
+                                textItem.R.forEach((run) => {
+                                    // Decode text (it comes as URI encoded)
+                                    if (run.T) extractedText += decodeURIComponent(run.T) + " ";
+                                });
+                            }
+                        });
+                    }
+                    extractedText += "\n";
+                });
+                
+                resolve(extractedText);
+            } catch (error) {
+                console.error("Manual extraction failed:", error);
+                resolve(""); 
+            }
+        });
+
+        try {
+            parser.parseBuffer(buffer);
+        } catch (e) {
+            console.error("Buffer error:", e);
+            resolve("");
         }
-    } catch (error) {
-        console.error("PDF Parsing Error:", error);
-        finalContent = "⚠️ Error reading PDF file.";
-    }
+    });
+
+    // Fallback if text is empty
+    const finalContent = typeof text === 'string' && text.trim().length > 0 
+        ? text 
+        : "⚠️ Text could not be extracted. This might be a scanned image.";
 
     await db.course.create({
       data: {
@@ -60,7 +88,7 @@ export async function uploadPdf(formData: FormData) {
   }
 }
 
-// --- 4. MANAGEMENT ACTIONS ---
+// --- 2. MANAGEMENT ACTIONS ---
 
 export async function deleteCourse(id: string) {
   try {
@@ -80,7 +108,7 @@ export async function renameCourse(id: string, newTitle: string) {
   }
 }
 
-// --- 5. GENERATORS ---
+// --- 3. GENERATORS ---
 
 export async function generateStudyGuide(id: string) {
   try {
@@ -263,7 +291,7 @@ export async function generateCrossword(id: string) {
     const content = typeof response.content === 'string' ? response.content : JSON.stringify(response.content);
     const data = JSON.parse(content);
     
-    // Grid Building Logic
+    // Grid Logic
     const terms = data.terms;
     const gridSize = 12; 
     let grid = Array(gridSize).fill(null).map(() => Array(gridSize).fill(""));
@@ -271,7 +299,6 @@ export async function generateCrossword(id: string) {
 
     terms.sort((a: any, b: any) => b.word.length - a.word.length);
 
-    // Place first word
     const firstWord = terms[0];
     if (firstWord) {
         const startCol = Math.floor((gridSize - firstWord.word.length) / 2);
@@ -282,7 +309,6 @@ export async function generateCrossword(id: string) {
         placedWords.push({ ...firstWord, row: startRow, col: startCol, dir: 'across' });
     }
 
-    // Place remaining words
     for (let i = 1; i < terms.length; i++) {
         const currentTerm = terms[i];
         const word = currentTerm.word;
@@ -370,7 +396,9 @@ export async function generateCrossword(id: string) {
 
 export async function saveQuizResult(courseId: string, score: number, total: number) {
   try {
-    await db.quizResult.create({ data: { courseId, score, total } });
+    await db.quizResult.create({
+      data: { courseId, score, total },
+    });
     revalidatePath(`/notes/${courseId}`);
   } catch (error) {
     console.error("Save Error:", error);
@@ -379,7 +407,9 @@ export async function saveQuizResult(courseId: string, score: number, total: num
 
 export async function saveExamResult(courseId: string, score: number, total: number) {
   try {
-    await db.examResult.create({ data: { courseId, score, total } });
+    await db.examResult.create({
+      data: { courseId, score, total },
+    });
     revalidatePath(`/notes/${courseId}`);
   } catch (error) {
     console.error("Exam Save Error:", error);
