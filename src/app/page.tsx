@@ -19,7 +19,7 @@ export default async function Home() {
         <div className="flex flex-col md:flex-row justify-between items-end border-b-2 border-pink-100 pb-8">
           <div>
             <h1 className="text-5xl font-extrabold text-gray-900 tracking-tight">
-              My Study Portal <span className="text-pink-500">.</span>
+              My Study Tool <span className="text-pink-500">.</span>
             </h1>
             <p className="text-gray-500 mt-4 text-lg">
               Your AI-powered study assistant.

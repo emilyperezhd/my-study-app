@@ -1,21 +1,22 @@
-/** @type {import('next').NextConfig} */
-const nextConfig = {
-  // 1. Ignore TypeScript Errors during build (Keep this to prevent build fails)
-  typescript: {
-    ignoreBuildErrors: true,
-  },
-  // 2. Ignore ESLint Errors during build
-  eslint: {
-    ignoreDuringBuilds: true,
-  },
-  // 3. Increase timeout for static generation
-  staticPageGenerationTimeout: 120,
+import type { NextConfig } from "next";
 
-  // 4. FIX: Increase Upload Limit to 10MB
+const nextConfig: NextConfig = {
+  // 1. Tell Next.js to handle PDF internals on the server side only
+  serverExternalPackages: ["pdfjs-dist"],
+
+  // 2. Allow large PDF uploads (10MB)
   experimental: {
     serverActions: {
       bodySizeLimit: '10mb',
     },
+  },
+
+  // 3. Prevent build fails from strict type checks
+  typescript: {
+    ignoreBuildErrors: true,
+  },
+  eslint: {
+    ignoreDuringBuilds: true,
   },
 };
 

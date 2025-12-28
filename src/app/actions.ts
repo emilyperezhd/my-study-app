@@ -4,45 +4,44 @@ import { db } from "../lib/db";
 import { revalidatePath } from "next/cache";
 import { ChatOpenAI } from "@langchain/openai";
 import { PromptTemplate } from "@langchain/core/prompts";
+// Import the modern PDF library
+import { extractText } from "unpdf"; 
 
-// --- 1. UPLOAD ACTION (Lazy Loaded pdf-parse) ---
+// --- 1. UPLOAD ACTION ---
 export async function uploadPdf(formData: FormData) {
   try {
     const file = formData.get("file") as File;
     if (!file) throw new Error("No file found");
 
     const arrayBuffer = await file.arrayBuffer();
-    const buffer = Buffer.from(arrayBuffer);
-
-    // --- VERCEL FIX START ---
-    // 1. Mock Browser Environment (Prevents "DOMMatrix is not defined" crash)
-    // @ts-ignore
-    if (!global.DOMMatrix) { global.DOMMatrix = class DOMMatrix { constructor() {} }; }
-    // @ts-ignore
-    if (!global.ImageData) { global.ImageData = class ImageData { constructor() {} }; }
-    // @ts-ignore
-    if (!global.Path2D) { global.Path2D = class Path2D { constructor() {} }; }
-
-    // 2. Lazy Load Library (Prevents Build-Time Crash)
-    let pdfParse = require("pdf-parse");
-    // Handle Next.js bundling quirks
-    if (typeof pdfParse !== 'function' && pdfParse.default) {
-        pdfParse = pdfParse.default;
-    }
-    // --- VERCEL FIX END ---
+    // unpdf expects a Uint8Array
+    const buffer = new Uint8Array(arrayBuffer);
 
     let finalContent = "";
     
     try {
-        const data = await pdfParse(buffer);
-        if (data && data.text && data.text.trim().length > 0) {
-            finalContent = data.text;
+        // Extract text
+        const { text } = await extractText(buffer);
+        
+        let rawText = "";
+        
+        if (Array.isArray(text)) {
+            rawText = text.join("\n");
         } else {
-            finalContent = "⚠️ Text extracted but empty. This might be an image scan.";
+            // If it returns a string, use it
+            rawText = text || "";
         }
+
+        // Clean up text
+        if (rawText.trim().length > 0) {
+            finalContent = rawText.replace(/\x00/g, "").trim();
+        } else {
+            finalContent = "⚠️ Text extraction returned empty. This PDF might be an image scan.";
+        }
+
     } catch (parseError) {
-        console.error("PDF Parse Error:", parseError);
-        finalContent = "⚠️ Error parsing PDF. File might be corrupted.";
+        console.error("PDF Parsing Error:", parseError);
+        finalContent = "⚠️ Error reading PDF file.";
     }
 
     await db.course.create({
@@ -261,9 +260,8 @@ export async function generateCrossword(id: string) {
     const content = typeof response.content === 'string' ? response.content : JSON.stringify(response.content);
     const data = JSON.parse(content);
     
-    const terms = data.terms;
-
     // Grid Building Logic
+    const terms = data.terms;
     const gridSize = 12; 
     let grid = Array(gridSize).fill(null).map(() => Array(gridSize).fill(""));
     let placedWords = [] as any[];
