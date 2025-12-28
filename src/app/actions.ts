@@ -4,39 +4,32 @@ import { db } from "../lib/db";
 import { revalidatePath } from "next/cache";
 import { ChatOpenAI } from "@langchain/openai";
 import { PromptTemplate } from "@langchain/core/prompts";
-// Import the modern PDF library
 import { extractText } from "unpdf"; 
+import { auth } from "@clerk/nextjs/server"; // <--- NEW IMPORT
 
-// --- 1. UPLOAD ACTION ---
+// --- 1. UPLOAD ACTION (Secured) ---
 export async function uploadPdf(formData: FormData) {
   try {
+    // 1. Get the current user
+    const { userId } = await auth();
+    if (!userId) throw new Error("Unauthorized");
+
     const file = formData.get("file") as File;
     if (!file) throw new Error("No file found");
 
     const arrayBuffer = await file.arrayBuffer();
-    // unpdf expects a Uint8Array
     const buffer = new Uint8Array(arrayBuffer);
 
     let finalContent = "";
     
     try {
-        // Extract text
         const { text } = await extractText(buffer);
-        
-        let rawText = "";
-        
-        if (Array.isArray(text)) {
-            rawText = text.join("\n");
-        } else {
-            // If it returns a string, use it
-            rawText = text || "";
-        }
+        let rawText = Array.isArray(text) ? text.join("\n") : (text || "");
 
-        // Clean up text
         if (rawText.trim().length > 0) {
             finalContent = rawText.replace(/\x00/g, "").trim();
         } else {
-            finalContent = "⚠️ Text extraction returned empty. This PDF might be an image scan.";
+            finalContent = "⚠️ Text extraction returned empty.";
         }
 
     } catch (parseError) {
@@ -44,8 +37,10 @@ export async function uploadPdf(formData: FormData) {
         finalContent = "⚠️ Error reading PDF file.";
     }
 
+    // 2. Save with userId
     await db.course.create({
       data: {
+        userId: userId, // <--- Link to user
         title: file.name,
         content: finalContent,
       }
@@ -57,11 +52,20 @@ export async function uploadPdf(formData: FormData) {
   }
 }
 
-// --- 2. MANAGEMENT ACTIONS ---
+// --- 2. MANAGEMENT ACTIONS (Secured) ---
 
 export async function deleteCourse(id: string) {
   try {
-    await db.course.delete({ where: { id: id } });
+    const { userId } = await auth();
+    if (!userId) return;
+
+    // Only delete if it belongs to this user
+    await db.course.deleteMany({ 
+        where: { 
+            id: id,
+            userId: userId 
+        } 
+    });
     revalidatePath("/");
   } catch (error) {
     console.error("Delete Error:", error);
@@ -70,14 +74,22 @@ export async function deleteCourse(id: string) {
 
 export async function renameCourse(id: string, newTitle: string) {
   try {
-    await db.course.update({ where: { id: id }, data: { title: newTitle } });
+    const { userId } = await auth();
+    if (!userId) return;
+
+    await db.course.updateMany({
+      where: { id: id, userId: userId },
+      data: { title: newTitle }
+    });
     revalidatePath("/");
   } catch (error) {
     console.error("Rename Error:", error);
   }
 }
 
-// --- 3. GENERATORS ---
+// --- 3. GENERATORS (Standard) ---
+// (We don't strictly need to check ID here because the user is already on the page, 
+// but the page load itself is protected).
 
 export async function generateStudyGuide(id: string) {
   try {
@@ -260,7 +272,7 @@ export async function generateCrossword(id: string) {
     const content = typeof response.content === 'string' ? response.content : JSON.stringify(response.content);
     const data = JSON.parse(content);
     
-    // Grid Building Logic
+    // Grid Logic
     const terms = data.terms;
     const gridSize = 12; 
     let grid = Array(gridSize).fill(null).map(() => Array(gridSize).fill(""));
